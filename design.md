@@ -101,4 +101,5 @@ KabuTrailの既存UIをどのようにStock Whale Radarにマッピングする�
 ---
 
 
+
 [KabuTrail](https://kabu-trail.vercel.app/)

@@ -1,7 +1,11 @@
 # Stock Whale Radar Backend (BE)
 
 ## プロジェクト概要
-「大量保有報告書」などのデータを解析し、大口投資家（クジラ）の動きを可視化・追跡するためのバックエンドサービスです。
+「大量保有報告書」などのデータを解析し、大口投資家（クジラ）の動きを可視化・追跡するためのフロントサービスです。
+バックエンド側で取得したデータを、表示するための画面です、
+直観的に、情報集めらえるように株価などもYhooFinanceから入手すること
+ログインした場合にはBucketsを管理できる
+Bucketsには複数の銘柄をもち、それを一覧で確認できるようにする。
 
 ## 主な機能
 - **ユーザー認証**: サインアップ、ログイン機能。
@@ -11,31 +15,35 @@
 - **ダッシュボード**: 保有数の変動が大きい銘柄や、最新のトレンドをサマリー表示。
 
 ## 技術スタック
-- **言語/フレームワーク**: Python 3.11+ / FastAPI
+- **言語/フレームワーク**: TypeScript / NextJS
 - **データベース**: SQLite (Turso)
-- **デプロイ**: Google Cloud Run
+- **デプロイ**: Netlify
 - **CI/CD**: GitHub Actions
 
 ## ディレクトリ構成（予定）
-```text
-.
-├── app/
-│   ├── main.py          # エントリポイント
-│   ├── models.py        # SQLAlchemyモデル
-│   ├── schemas.py       # Pydanticスキーマ
-│   ├── auth.py          # 認証関連ロジック
-│   ├── database.py      # DB接続設定
-│   └── routers/         # APIルート分割
-├── docs/                # 設計ドキュメント
-├── tests/               # テストコード
-├── Dockerfile           # コンテナ定義
-├── requirements.txt     # 依存ライブラリ
-└── .github/             # GitHub Actions設定
 ```
-
-te
+src/
+├── app/                          # Next.js App Router
+│   ├── layout.tsx                # 全体レイアウト
+│   ├── page.tsx                  # ホームページ
+│   ├── api/                      # API ルート
+│   ├── rader/                    # メイン機能
+│   │   ├── list/                 # 提出者ベースでの一覧
+│   │   └── stocklist/            # 銘柄指定での一覧
+│   └── (user)                    # ログイン済み者向け
+│   │   └── buckets/              # Buckets管理
+│   └── stockview                 # ログイン済み者向け
+│       └── page.tsx              # チャートの表示
+├── components/                   # React コンポーネント
+│   ├── layout/                   # レイアウトコンポーネント
+│   ├── organisms/                # 複合コンポーネント
+│   ├── pages/                    # ページロジックコンポーネント
+│   └── ui/                       # shadcn/ui
+├── service/                      # ビジネスロジック層
+├── db/                           # データベース
+│   └── schema/                   # Drizzle スキーマ定義
+└── lib/                          # 共通ライブラリ
+```
 
 ## history
 
-* 2026/04/24
-  * Deploy https://stock-whale-radar-be-217119007226.asia-northeast1.run.app/
