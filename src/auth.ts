@@ -44,7 +44,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         });
         if (dbUser) {
           token.id = dbUser.id;
-          token.isAdmin = dbUser.isAdmin;
+          token.isAdmin = dbUser.isAdmin ?? false;
         }
       }
       return token;

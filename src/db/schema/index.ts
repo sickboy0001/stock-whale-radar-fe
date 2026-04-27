@@ -9,8 +9,8 @@ export const users = sqliteTable("users", {
   googleId: text("google_id").unique(),
   emailVerified: integer("email_verified", { mode: "boolean" }).default(true),
   isAdmin: integer("is_admin", { mode: "boolean" }).default(false),
-  createdAt: text("created_at").default(sql`CURRENT_TIMESTAMP`),
-  updatedAt: text("updated_at").default(sql`CURRENT_TIMESTAMP`),
+  createdAt: integer("created_at").default(sql`(strftime('%s', 'now'))`),
+  updatedAt: integer("updated_at").default(sql`(strftime('%s', 'now'))`),
 });
 
 export const documents = sqliteTable("documents", {
