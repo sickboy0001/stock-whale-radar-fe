@@ -141,7 +141,7 @@ EDINET APIから返ってくる証券コードは末尾に必ずゼロが付く5
 CREATE TABLE edinet_codes (
   edinet_code TEXT PRIMARY KEY,       -- 例: E00004
   submitter_type TEXT,                -- 提出者種別 (例: 内国法人・組合)
-  listed_category TEXT,               -- 上場区分 (例: 上場)
+  listing_category TEXT,               -- 上場区分 (例: 上場)
   is_consolidated TEXT,               -- 連結の有無 (有/無)
   capital INTEGER,                    -- 資本金 (百万円)
   fiscal_year_end TEXT,               -- 決算日 (例: 5月31日)

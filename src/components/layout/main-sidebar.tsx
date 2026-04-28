@@ -24,6 +24,7 @@ const navItems = [
 
 const adminItems = [
   { label: "インポート管理", href: "/Admin", icon: Database },
+  { label: "インポート進捗", href: "/daily_status", icon: LayoutDashboard },
 ];
 
 export function MainSidebar() {

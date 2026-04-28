@@ -51,17 +51,17 @@ export const ownershipReports = sqliteTable("ownership_reports", {
 export const edinetCodes = sqliteTable("edinet_codes", {
   edinetCode: text("edinet_code").primaryKey(),
   submitterType: text("submitter_type"),
-  listedCategory: text("listed_category"),
-  isConsolidated: text("is_consolidated"),
+  listedCategory: text("listing_status"),
+  isConsolidated: text("consolidated"),
   capital: integer("capital"),
-  fiscalYearEnd: text("fiscal_year_end"),
-  submitterName: text("submitter_name").notNull(),
-  submitterNameEn: text("submitter_name_en"),
-  submitterNameKana: text("submitter_name_kana"),
+  settlementDate: text("settlement_date"),
+  submitterName: text("filer_name").notNull(),
+  submitterNameEn: text("filer_name_en"),
+  submitterNameKana: text("filer_name_kana"),
   address: text("address"),
   industry: text("industry"),
   secCode: text("sec_code"),
-  corporateNumber: text("corporate_number"),
+  corporateNumber: text("jcn"),
 });
 
 export const userBuckets = sqliteTable("user_buckets", {
@@ -75,4 +75,15 @@ export const bucketItems = sqliteTable("bucket_items", {
   id: integer("id").primaryKey({ autoIncrement: true }),
   bucketId: integer("bucket_id").references(() => userBuckets.id),
   secCode: text("sec_code").notNull(),
+});
+
+export const importDailyStatus = sqliteTable("import_daily_status", {
+  targetDate: text("target_date").primaryKey(),
+  status: text("status").notNull(), // completed, failed, processing, pending
+  totalDocsCount: integer("total_docs_count"),
+  targetDocsCount: integer("target_docs_count"),
+  successCount: integer("success_count"),
+  lastRunStartAt: text("last_run_start_at"),
+  lastRunEndAt: text("last_run_end_at"),
+  errorMessage: text("error_message"),
 });

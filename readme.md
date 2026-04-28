@@ -93,8 +93,6 @@ src/
 * 管理者で利用常用確認する画面は[Looker](./docs/41_LOOKER_STUDIO_INTEGRATION.md)に従うこと
 * 株価のチャートの利用については[LightWeight](./docs/42_lightweight_charts_spec.md)を参照すること。
 
-## history
-
 ## stock-whale-radar-be（バックエンド）
 ### 目的
 * EDINETから大量保有者情報を取得して、Turso（SQLite）にデータを登録する。
@@ -145,3 +143,8 @@ graph TD
     API -- "③ データ取得" --> EDINET
     API -- "④ 保存" --> Turso
 ```
+
+## history
+* 2026/4/28
+  * [deploy:netlify](https://stock-whale-radar-fe.netlify.app/)
+
