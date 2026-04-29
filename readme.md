@@ -145,6 +145,9 @@ graph TD
 ```
 
 ## history
+* 2026/4/30
+  * https://irbank.net/E05376/share これ使えるかも
+  * add ui dashboard whalemovement
 * 2026/4/28
   * [deploy:netlify](https://stock-whale-radar-fe.netlify.app/)
 
