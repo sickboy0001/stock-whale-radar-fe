@@ -11,6 +11,7 @@ import {
   Menu,
   LogOut,
   TrendingUp,
+  Activity,
 } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -30,7 +31,8 @@ const navItems = [
 
 const adminItems = [
   { label: "インポート管理", href: "/Admin", icon: Database },
-  { label: "インポート進捗", href: "/daily_status", icon: LayoutDashboard },
+  { label: "インポート進捗", href: "/daily-status", icon: LayoutDashboard },
+  { label: "インポート履歴", href: "/recent-daily-status", icon: Activity },
 ];
 
 export function MainSidebar() {

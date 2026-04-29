@@ -1,5 +1,5 @@
 import { getDailyImportStatus } from "@/service/daily-import";
-import { DailyStatusPage } from "@/components/pages/daily_status";
+import { DailyStatusPage } from "@/components/pages/daily-status";
 
 interface PageProps {
   searchParams?: Promise<{

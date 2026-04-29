@@ -45,6 +45,17 @@ export async function debugGet2025Data() {
   };
 }
 
+export async function getRecentImportStatus(limit: number = 10) {
+  const results = await db
+    .select()
+    .from(importDailyStatus)
+    .where(gte(importDailyStatus.targetDocsCount, 1))
+    .orderBy(desc(importDailyStatus.targetDate))
+    .limit(limit);
+
+  return results;
+}
+
 export async function getImportDetailByDate(targetDate: string) {
   const results = await db
     .select({

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo, useTransition } from "react";
+import React, { useState, useMemo } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
   Card,
@@ -28,14 +28,7 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Search } from "lucide-react";
-import {
-  getDailyImportStatus,
-  getImportDetailByDate,
-} from "@/service/daily-import";
-import {
-  DailyImportDetail,
-  type ImportDetail,
-} from "@/components/organisms/daily-import-detail";
+import { DailyImportDetail } from "@/components/organisms/daily-import-detail";
 
 type DailyImportStatus = {
   targetDate: string;
@@ -64,8 +57,6 @@ export function DailyStatusPage({
     new Date().getMonth() + 1,
   );
   const [selectedDay, setSelectedDay] = useState<string | null>(null);
-  const [details, setDetails] = useState<ImportDetail[]>([]);
-  const [isPending, startTransition] = useTransition();
 
   // 月ごとの集計
   const monthlyStats = useMemo(() => {
@@ -114,10 +105,6 @@ export function DailyStatusPage({
 
   const handleShowDetails = (date: string) => {
     setSelectedDay(date);
-    startTransition(async () => {
-      const data = await getImportDetailByDate(date);
-      setDetails(data);
-    });
   };
 
   const getStatusBadge = (status: string) => {
@@ -311,8 +298,6 @@ export function DailyStatusPage({
       {selectedDay && (
         <DailyImportDetail
           date={selectedDay}
-          details={details}
-          isLoading={isPending}
           onClose={() => setSelectedDay(null)}
         />
       )}

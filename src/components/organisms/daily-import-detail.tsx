@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Table,
@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Database, X, Loader2, TrendingUp, TrendingDown } from "lucide-react";
 import { toHalfWidth } from "@/lib/utils";
 import Link from "next/link";
+import { getImportDetailByDate } from "@/service/daily-import";
 
 export type ImportDetail = {
   docId: string;
@@ -31,17 +32,27 @@ export type ImportDetail = {
 
 interface DailyImportDetailProps {
   date: string;
-  details: ImportDetail[];
-  isLoading: boolean;
   onClose: () => void;
 }
 
-export function DailyImportDetail({
-  date,
-  details,
-  isLoading,
-  onClose,
-}: DailyImportDetailProps) {
+export function DailyImportDetail({ date, onClose }: DailyImportDetailProps) {
+  const [details, setDetails] = useState<ImportDetail[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchData() {
+      setIsLoading(true);
+      try {
+        const data = await getImportDetailByDate(date);
+        setDetails(data as ImportDetail[]);
+      } catch (error) {
+        console.error("Failed to fetch import details:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    fetchData();
+  }, [date]);
   return (
     <Card className="animate-in fade-in slide-in-from-bottom-4 duration-500 shadow-lg border-2">
       <CardHeader className="flex flex-row items-center justify-between bg-muted/20 pb-4">
