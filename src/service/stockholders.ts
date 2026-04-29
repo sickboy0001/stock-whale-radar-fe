@@ -3,6 +3,7 @@
 import { db } from "@/db";
 import { documents, ownershipReports, edinetCodes } from "@/db/schema";
 import { and, eq, or, desc, sql, type SQLWrapper } from "drizzle-orm";
+import { getStockQuote } from "@/service/yfinance-api";
 
 export async function getStockholdersByStock(params: {
   edinetCode?: string;
@@ -20,11 +21,22 @@ export async function getStockholdersByStock(params: {
   if (secCode) {
     stockInfoConditions.push(eq(edinetCodes.secCode, secCode));
   }
-  const stockInfo = await db
+  const stockInfoResult = await db
     .select()
     .from(edinetCodes)
     .where(or(...stockInfoConditions))
     .get();
+
+  // yfinance API から追加の銘柄情報を取得してマージ
+  const stockInfo: any = stockInfoResult ? { ...stockInfoResult } : null;
+  if (stockInfo?.secCode) {
+    // 証券コードは "72030" のようになっている場合があるため、最初の4桁を使用
+    const pureSecCode = stockInfo.secCode.substring(0, 4);
+    const yfData = await getStockQuote(pureSecCode);
+    if (yfData) {
+      Object.assign(stockInfo, yfData);
+    }
+  }
 
   // 2. 報告履歴の取得
   const targetEdinetCode = stockInfo?.edinetCode || edinetCode;

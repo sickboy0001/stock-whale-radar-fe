@@ -17,28 +17,22 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { TrendingUp, TrendingDown, Users, Search } from "lucide-react";
-import { toHalfWidth } from "@/lib/utils";
+import {
+  TrendingUp,
+  TrendingDown,
+  Users,
+  Search,
+  ExternalLink,
+} from "lucide-react";
+import { toHalfWidth, formatWithUnit } from "@/lib/utils";
 import Link from "next/link";
+import { StockYFinanceStats } from "@/components/organisms/stock-yfinance-stats";
+import { StockInfo, HistoryItem } from "@/type/stock";
 
-type StockInfo = {
-  edinetCode: string;
-  submitterName: string;
-  secCode: string | null;
-  industry: string | null;
-};
-
-type HistoryItem = {
-  obligationDate: string | null;
-  submitterName: string | null;
-  submitterEdinetCode: string | null;
-  holdingRatio: number | null;
-  prevHoldingRatio: number | null;
-  ratioDiff: number | null;
-  holdingPurpose: string | null;
-  docDescription: string | null;
-  docId: string | null;
-};
+interface StockholdersPageProps {
+  stockInfo: StockInfo | null;
+  history: HistoryItem[];
+}
 
 interface StockholdersPageProps {
   stockInfo: StockInfo | null;
@@ -77,6 +71,15 @@ export function StockholdersPage({
             <span className="font-bold text-2xl">
               {toHalfWidth(stockInfo.submitterName)}
             </span>
+            <a
+              href={`https://finance.yahoo.co.jp/quote/${stockInfo.secCode?.substring(0, 4)}.T`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-zinc-400 hover:text-blue-500 transition-colors"
+              title="Yahoo!ファイナンスで表示"
+            >
+              <ExternalLink className="w-5 h-5" />
+            </a>
             <span className="text-muted-foreground text-sm">
               (EDINETコード: {stockInfo.edinetCode})
             </span>
@@ -87,6 +90,9 @@ export function StockholdersPage({
           </div>
         )}
       </div>
+
+      {/* yfinance 指標セクション */}
+      {stockInfo && <StockYFinanceStats stockInfo={stockInfo} />}
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card className="md:col-span-1">
@@ -112,9 +118,25 @@ export function StockholdersPage({
                       {toHalfWidth(item.submitterName || "")}
                     </Link>
                     <div className="flex justify-between items-end mt-1">
-                      <span className="text-lg font-mono font-bold">
-                        {item.holdingRatio?.toFixed(2)}%
-                      </span>
+                      <div className="flex items-baseline gap-2">
+                        <span className="text-lg font-mono font-bold">
+                          {item.holdingRatio?.toFixed(2)}%
+                        </span>
+                        {stockInfo?.sharesOutstanding &&
+                          item.holdingRatio &&
+                          stockInfo?.prevClose && (
+                            <span className="text-[11px] text-emerald-600 font-bold whitespace-nowrap">
+                              (
+                              {formatWithUnit(
+                                stockInfo.sharesOutstanding *
+                                  (item.holdingRatio / 100) *
+                                  stockInfo.prevClose,
+                                "円",
+                              )}
+                              )
+                            </span>
+                          )}
+                      </div>
                       <div className="flex flex-col items-end">
                         <span
                           className={`text-xs font-bold ${

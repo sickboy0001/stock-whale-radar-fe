@@ -3,6 +3,7 @@
 import { db } from "@/db";
 import { documents, ownershipReports, edinetCodes } from "@/db/schema";
 import { and, eq, desc, sql } from "drizzle-orm";
+import { getBatchStockQuotes } from "@/service/yfinance-api";
 
 export async function getHolderStocks(edinetCode: string) {
   if (!edinetCode) return null;
@@ -15,7 +16,7 @@ export async function getHolderStocks(edinetCode: string) {
     .get();
 
   // 2. 投資履歴の取得
-  const history = await db
+  const historyRaw = await db
     .select({
       obligationDate: ownershipReports.obligationDate,
       issuerName: documents.issuerName,
@@ -33,6 +34,27 @@ export async function getHolderStocks(edinetCode: string) {
     .innerJoin(documents, eq(ownershipReports.docId, documents.docId))
     .where(eq(documents.submitterEdinetCode, edinetCode))
     .orderBy(desc(ownershipReports.obligationDate));
+
+  // 3. yfinance データの取得とマージ
+  const uniqueSecCodes = Array.from(
+    new Set(
+      historyRaw
+        .map((item) => item.secCode?.substring(0, 4))
+        .filter((code): code is string => !!code),
+    ),
+  );
+
+  const yfDataMap = await getBatchStockQuotes(uniqueSecCodes);
+
+  const history = historyRaw.map((item) => {
+    const pureSecCode = item.secCode?.substring(0, 4);
+    const yfData = pureSecCode ? yfDataMap[pureSecCode] : null;
+    return {
+      ...item,
+      sharesOutstanding: yfData?.sharesOutstanding,
+      prevClose: yfData?.prevClose,
+    };
+  });
 
   return {
     holderInfo,

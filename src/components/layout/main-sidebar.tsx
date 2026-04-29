@@ -10,6 +10,7 @@ import {
   Database,
   Menu,
   LogOut,
+  TrendingUp,
 } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -20,6 +21,11 @@ const navItems = [
   { label: "ダッシュボード", href: "/", icon: LayoutDashboard },
   { label: "銘柄検索", href: "/rader/Stocks", icon: Search },
   { label: "クジラ検索", href: "/rader/whales", icon: Users },
+  {
+    label: "クジラの動き",
+    href: "/rader/RecentWhaleMovements",
+    icon: TrendingUp,
+  },
 ];
 
 const adminItems = [

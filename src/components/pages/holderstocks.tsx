@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { TrendingUp, TrendingDown, Briefcase } from "lucide-react";
-import { toHalfWidth } from "@/lib/utils";
+import { toHalfWidth, formatWithUnit } from "@/lib/utils";
 import Link from "next/link";
 
 type HolderInfo = {
@@ -38,6 +38,8 @@ type HistoryItem = {
   ratioDiff: number | null;
   holdingPurpose: string | null;
   docId: string | null;
+  sharesOutstanding?: number | null;
+  prevClose?: number | null;
 };
 
 interface HolderStocksPageProps {
@@ -57,10 +59,20 @@ export function HolderStocksPage({
         latestByIssuer.set(item.issuerEdinetCode, item);
       }
     });
-    // 保有割合が0%以上のものを抽出してソート
+    // 保有金額（推定）が大きい順にソート
     return Array.from(latestByIssuer.values())
       .filter((item) => (item.holdingRatio || 0) > 0)
-      .sort((a, b) => (b.holdingRatio || 0) - (a.holdingRatio || 0));
+      .sort((a, b) => {
+        const valA =
+          (a.sharesOutstanding || 0) *
+          ((a.holdingRatio || 0) / 100) *
+          (a.prevClose || 0);
+        const valB =
+          (b.sharesOutstanding || 0) *
+          ((b.holdingRatio || 0) / 100) *
+          (b.prevClose || 0);
+        return valB - valA;
+      });
   }, [history]);
 
   return (
@@ -112,9 +124,25 @@ export function HolderStocksPage({
                           : ""}
                         {toHalfWidth(item.issuerName || "")}
                       </Link>
-                      <span className="text-lg font-mono font-bold ml-2">
-                        {item.holdingRatio?.toFixed(2)}%
-                      </span>
+                      <div className="flex flex-col items-end ml-2">
+                        <span className="text-lg font-mono font-bold">
+                          {item.holdingRatio?.toFixed(2)}%
+                        </span>
+                        {item.sharesOutstanding &&
+                          item.holdingRatio &&
+                          item.prevClose && (
+                            <span className="text-[11px] text-emerald-600 font-bold whitespace-nowrap">
+                              (
+                              {formatWithUnit(
+                                item.sharesOutstanding *
+                                  (item.holdingRatio / 100) *
+                                  item.prevClose,
+                                "円",
+                              )}
+                              )
+                            </span>
+                          )}
+                      </div>
                     </div>
                     <div className="flex justify-between items-center mt-1">
                       <span className="text-[10px] text-muted-foreground italic">
@@ -182,7 +210,21 @@ export function HolderStocksPage({
                         {item.secCode?.substring(0, 4) || "-"}
                       </TableCell>
                       <TableCell className="text-right font-mono font-bold text-xs">
-                        {item.holdingRatio?.toFixed(2)}%
+                        <div className="flex flex-col items-end">
+                          <span>{item.holdingRatio?.toFixed(2)}%</span>
+                          {item.sharesOutstanding &&
+                            item.holdingRatio &&
+                            item.prevClose && (
+                              <span className="text-[10px] text-emerald-600 font-bold whitespace-nowrap font-sans">
+                                {formatWithUnit(
+                                  item.sharesOutstanding *
+                                    (item.holdingRatio / 100) *
+                                    item.prevClose,
+                                  "円",
+                                )}
+                              </span>
+                            )}
+                        </div>
                       </TableCell>
                       <TableCell
                         className={`text-right font-mono text-xs ${
