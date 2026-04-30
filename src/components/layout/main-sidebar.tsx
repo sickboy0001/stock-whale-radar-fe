@@ -20,6 +20,7 @@ import { signOut } from "next-auth/react";
 
 const navItems = [
   { label: "ダッシュボード", href: "/", icon: LayoutDashboard },
+  { label: "Whale Lookup", href: "/radar/search", icon: Search },
   { label: "銘柄検索", href: "/rader/Stocks", icon: Search },
   { label: "クジラ検索", href: "/rader/whales", icon: Users },
   {
@@ -30,7 +31,12 @@ const navItems = [
 ];
 
 const adminItems = [
-  { label: "インポート管理", href: "/Admin", icon: Database },
+  {
+    label: "インポート管理",
+    href: "https://stock-whale-radar-be-217119007226.asia-northeast1.run.app/",
+    icon: Database,
+    isExternal: true,
+  },
   { label: "インポート進捗", href: "/daily-status", icon: LayoutDashboard },
   { label: "インポート履歴", href: "/recent-daily-status", icon: Activity },
 ];
@@ -74,28 +80,32 @@ export function MainSidebar() {
             </div>
           </div>
 
-          <div>
-            <h2 className="mb-2 px-2 text-xs font-semibold uppercase tracking-wider text-slate-400">
-              管理
-            </h2>
-            <div className="space-y-1">
-              {adminItems.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className={cn(
-                    "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:bg-slate-800 hover:text-white",
-                    pathname === item.href
-                      ? "bg-slate-800 text-white"
-                      : "text-slate-400",
-                  )}
-                >
-                  <item.icon className="w-4 h-4" />
-                  {item.label}
-                </Link>
-              ))}
+          {session?.user?.isAdmin && (
+            <div>
+              <h2 className="mb-2 px-2 text-xs font-semibold uppercase tracking-wider text-slate-400">
+                管理
+              </h2>
+              <div className="space-y-1">
+                {adminItems.map((item) => (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    target={item.isExternal ? "_blank" : undefined}
+                    rel={item.isExternal ? "noopener noreferrer" : undefined}
+                    className={cn(
+                      "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:bg-slate-800 hover:text-white",
+                      pathname === item.href
+                        ? "bg-slate-800 text-white"
+                        : "text-slate-400",
+                    )}
+                  >
+                    <item.icon className="w-4 h-4" />
+                    {item.label}
+                  </Link>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </ScrollArea>
 

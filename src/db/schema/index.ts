@@ -87,3 +87,15 @@ export const importDailyStatus = sqliteTable("import_daily_status", {
   lastRunEndAt: text("last_run_end_at"),
   errorMessage: text("error_message"),
 });
+
+export const fundCodes = sqliteTable("fund_codes", {
+  fundCode: text("fund_code").primaryKey(),
+  secCode: text("sec_code"),
+  fundName: text("fund_name").notNull(),
+  fundNameKana: text("fund_name_kana"),
+  // category: text("category"), // DBに存在しないためコメントアウト
+  specificPeriod1: text("specific_period1"),
+  specificPeriod2: text("specific_period2"),
+  edinetCode: text("edinet_code"),
+  issuerName: text("issuer_name"),
+});
