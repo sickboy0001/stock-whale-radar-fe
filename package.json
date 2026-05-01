@@ -5,6 +5,11 @@
   "engines": {
     "node": ">=20.0.0"
   },
+  "overrides": {
+    "@cloudflare/next-on-pages": {
+      "next": "$next"
+    }
+  },
   "scripts": {
     "dev": "next dev",
     "dev:turbo": "next dev --turbopack",
