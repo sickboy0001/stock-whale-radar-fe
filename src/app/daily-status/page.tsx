@@ -1,5 +1,3 @@
-export const runtime = "edge"; // この一行を追加
-
 import { getDailyImportStatus } from "@/service/daily-import";
 import { DailyStatusPage } from "@/components/pages/daily-status";
 

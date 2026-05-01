@@ -1,5 +1,3 @@
-export const runtime = "edge"; // この一行を追加
-
 import { RecentWhaleMovements } from "@/components/pages/recent-whale-movements";
 import { RecentWhaleMovementsList } from "@/components/organisms/recent-whale-movements-list";
 import { Suspense } from "react";

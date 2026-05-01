@@ -1,5 +1,3 @@
-export const runtime = "edge"; // この一行を追加
-
 import { getStockholdersByStock } from "@/service/stockholders";
 import { StockholdersPage } from "@/components/pages/stockholders";
 

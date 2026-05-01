@@ -1,5 +1,3 @@
-export const runtime = "edge"; // この一行を追加
-
 import { EntitySearch } from "@/components/pages/entity-search";
 
 export default function SearchPage() {

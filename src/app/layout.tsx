@@ -21,8 +21,6 @@ export const metadata: Metadata = {
   description: "大口投資家（クジラ）の動きを可視化・追跡するためのサービス",
 };
 
-// export const runtime = "edge";
-
 export default function RootLayout({
   children,
 }: Readonly<{
