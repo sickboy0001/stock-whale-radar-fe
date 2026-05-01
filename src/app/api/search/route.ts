@@ -1,3 +1,5 @@
+export const runtime = "edge"; // この一行を追加
+
 import { NextRequest, NextResponse } from "next/server";
 import { searchWhales } from "@/service/search";
 

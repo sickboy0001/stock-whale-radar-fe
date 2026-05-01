@@ -1,3 +1,5 @@
+export const runtime = "edge"; // この一行を追加
+
 export default function WhalesPage() {
   return (
     <div className="container mx-auto p-8">
