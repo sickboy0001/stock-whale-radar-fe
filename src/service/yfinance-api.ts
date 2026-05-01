@@ -1,19 +1,48 @@
 import YahooFinance from "yahoo-finance2";
 
+// yahoo-finance2 の型定義をインポート（もし利用可能なら）
+// 利用できない場合は、必要なプロパティを持つインターフェースを定義します。
+
+export interface StockQuote {
+  marketCap?: number;
+  per?: number;
+  pbr?: number;
+  dividendYield?: number;
+  lastPrice?: number;
+  currency?: string;
+  prevClose?: number;
+  open?: number;
+  high?: number;
+  low?: number;
+  volume?: number;
+  tradingValue?: number;
+  sharesOutstanding?: number;
+  dividendRate?: number;
+  eps?: number;
+  bps?: number;
+  fiftyTwoWeekHigh?: number;
+  fiftyTwoWeekLow?: number;
+  symbol?: string;
+}
+
 // yahoo-finance2 v2系では環境によってインスタンス化が必要な場合があります。
 // エラーメッセージの推奨に従い、インスタンスを生成して使用します。
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const yf = new (YahooFinance as any)();
 
 /**
  * yfinance (Yahoo Finance) から銘柄の時価情報を取得します。
  * @param symbol 証券コード (4桁) またはティッカーシンボル (例: "7203.T")
  */
-export async function getStockQuote(symbol: string) {
+export async function getStockQuote(
+  symbol: string,
+): Promise<StockQuote | null> {
   try {
     // 4桁の数字のみの場合は .T (東証) をデフォルトで付与
     const ticker = /^\d{4}$/.test(symbol) ? `${symbol}.T` : symbol;
 
     // quoteSummary ではなく quote を使用して主要な指標を一度に取得
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const result = (await yf.quote(ticker)) as any;
 
     if (!result) return null;
@@ -50,16 +79,19 @@ export async function getStockQuote(symbol: string) {
  * 複数の銘柄の時価情報を一括取得します。
  * @param symbols 証券コード (4桁) またはティッカーシンボルの配列
  */
-export async function getBatchStockQuotes(symbols: string[]) {
+export async function getBatchStockQuotes(
+  symbols: string[],
+): Promise<Record<string, Partial<StockQuote>>> {
   if (!symbols.length) return {};
 
   try {
     const tickers = symbols.map((s) => (/^\d{4}$/.test(s) ? `${s}.T` : s));
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const results = (await yf.quote(tickers)) as any[];
 
-    const dataMap: Record<string, any> = {};
+    const dataMap: Record<string, Partial<StockQuote>> = {};
     results.forEach((result) => {
-      if (!result) return;
+      if (!result || !result.symbol) return;
       const symbol = result.symbol.split(".")[0]; // "7203.T" -> "7203"
       dataMap[symbol] = {
         marketCap: result.marketCap,

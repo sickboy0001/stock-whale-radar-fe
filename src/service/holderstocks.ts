@@ -2,7 +2,7 @@
 
 import { db } from "@/db";
 import { documents, ownershipReports, edinetCodes } from "@/db/schema";
-import { and, eq, desc, sql } from "drizzle-orm";
+import { eq, desc, sql } from "drizzle-orm";
 import { getBatchStockQuotes } from "@/service/yfinance-api";
 
 export async function getHolderStocks(edinetCode: string) {

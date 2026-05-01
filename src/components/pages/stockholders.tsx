@@ -17,22 +17,11 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import {
-  TrendingUp,
-  TrendingDown,
-  Users,
-  Search,
-  ExternalLink,
-} from "lucide-react";
+import { TrendingUp, TrendingDown, Users, ExternalLink } from "lucide-react";
 import { toHalfWidth, formatWithUnit } from "@/lib/utils";
 import Link from "next/link";
 import { StockYFinanceStats } from "@/components/organisms/stock-yfinance-stats";
 import { StockInfo, HistoryItem } from "@/type/stock";
-
-interface StockholdersPageProps {
-  stockInfo: StockInfo | null;
-  history: HistoryItem[];
-}
 
 interface StockholdersPageProps {
   stockInfo: StockInfo | null;

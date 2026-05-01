@@ -1,21 +1,13 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { RecentImportStatus } from "@/components/organisms/recent-import-status";
 import { DailyImportDetail } from "@/components/organisms/daily-import-detail";
 import { getRecentImportStatus } from "@/service/daily-import";
 import {
   TrendingUp,
   TrendingDown,
-  Plus,
   FileText,
   Users,
   DollarSign,
@@ -49,97 +41,6 @@ const summaryStats = [
     trend: "down",
   },
 ];
-
-// タイムラインデータのダミーデータ
-const timelineItems = [
-  {
-    id: 1,
-    fundName: "アクティビスト・ファンド A",
-    stockName: "ABC 株式会社",
-    previousHoldings: "5.2%",
-    currentHoldings: "6.8%",
-    change: "+1.6%",
-    purpose: "経営参加の意図あり",
-    timestamp: "2026-04-27 14:30",
-    action: "buy",
-  },
-  {
-    id: 2,
-    fundName: "グローバル・インベスト B",
-    stockName: "XYZ  Corp",
-    previousHoldings: "7.1%",
-    currentHoldings: "5.4%",
-    change: "-1.7%",
-    purpose: "財務改善目的",
-    timestamp: "2026-04-27 13:15",
-    action: "sell",
-  },
-  {
-    id: 3,
-    fundName: "ベンチャーキャピタル C",
-    stockName: "DEF テクノロジーズ",
-    previousHoldings: "新規",
-    currentHoldings: "5.1%",
-    change: "新規取得",
-    purpose: "長期的な成長期待",
-    timestamp: "2026-04-27 11:00",
-    action: "new",
-  },
-];
-
-// 急上昇ランキングのダミーデータ
-const hotStocks = [
-  {
-    rank: 1,
-    name: "ABC 株式会社",
-    ticker: "ABC",
-    change: "+12.5%",
-    volume: "1,234,567",
-  },
-  {
-    rank: 2,
-    name: "GHI エナジー",
-    ticker: "GHI",
-    change: "+8.3%",
-    volume: "987,654",
-  },
-  {
-    rank: 3,
-    name: "JKL ファーマ",
-    ticker: "JKL",
-    change: "+6.7%",
-    volume: "765,432",
-  },
-  {
-    rank: 4,
-    name: "MNO 物流",
-    ticker: "MNO",
-    change: "+5.2%",
-    volume: "654,321",
-  },
-  {
-    rank: 5,
-    name: "PQR 通信",
-    ticker: "PQR",
-    change: "+4.1%",
-    volume: "543,210",
-  },
-];
-
-function getActionBadge(action: string) {
-  switch (action) {
-    case "buy":
-      return <Badge className="bg-red-500 hover:bg-red-600">買い増し</Badge>;
-    case "sell":
-      return (
-        <Badge className="bg-green-500 hover:bg-green-600">一部処分</Badge>
-      );
-    case "new":
-      return <Badge className="bg-teal-500 hover:bg-teal-600">新規取得</Badge>;
-    default:
-      return <Badge>その他</Badge>;
-  }
-}
 
 export function DashboardPage() {
   const [latestDate, setLatestDate] = useState<string | null>(null);

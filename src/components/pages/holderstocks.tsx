@@ -16,7 +16,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
 import { TrendingUp, TrendingDown, Briefcase } from "lucide-react";
 import { toHalfWidth, formatWithUnit } from "@/lib/utils";
 import Link from "next/link";

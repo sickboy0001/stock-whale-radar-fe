@@ -38,7 +38,11 @@ export async function searchWhales(query: string): Promise<SearchResult[]> {
     .limit(20);
 
   // ファンド検索
-  let funds: any[] = [];
+  let funds: {
+    code: string;
+    name: string;
+    issuerName: string | null;
+  }[] = [];
   try {
     funds = await db
       .select({

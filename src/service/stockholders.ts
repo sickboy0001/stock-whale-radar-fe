@@ -2,8 +2,8 @@
 
 import { db } from "@/db";
 import { documents, ownershipReports, edinetCodes } from "@/db/schema";
-import { and, eq, or, desc, sql, type SQLWrapper } from "drizzle-orm";
-import { getStockQuote } from "@/service/yfinance-api";
+import { eq, or, desc, sql, type SQLWrapper } from "drizzle-orm";
+import { getStockQuote, type StockQuote } from "@/service/yfinance-api";
 
 export async function getStockholdersByStock(params: {
   edinetCode?: string;
@@ -28,7 +28,8 @@ export async function getStockholdersByStock(params: {
     .get();
 
   // yfinance API から追加の銘柄情報を取得してマージ
-  const stockInfo: any = stockInfoResult ? { ...stockInfoResult } : null;
+  const stockInfo: (typeof edinetCodes.$inferSelect & StockQuote) | null =
+    stockInfoResult ? { ...stockInfoResult } : null;
   if (stockInfo?.secCode) {
     // 証券コードは "72030" のようになっている場合があるため、最初の4桁を使用
     const pureSecCode = stockInfo.secCode.substring(0, 4);
