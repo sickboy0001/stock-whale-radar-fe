@@ -1,7 +1,4 @@
-import YahooFinance from "yahoo-finance2";
-
-// yahoo-finance2 の型定義をインポート（もし利用可能なら）
-// 利用できない場合は、必要なプロパティを持つインターフェースを定義します。
+import yf from "yahoo-finance2";
 
 export interface StockQuote {
   marketCap?: number;
@@ -25,11 +22,6 @@ export interface StockQuote {
   symbol?: string;
 }
 
-// yahoo-finance2 v2系では環境によってインスタンス化が必要な場合があります。
-// エラーメッセージの推奨に従い、インスタンスを生成して使用します。
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const yf = new (YahooFinance as any)();
-
 /**
  * yfinance (Yahoo Finance) から銘柄の時価情報を取得します。
  * @param symbol 証券コード (4桁) またはティッカーシンボル (例: "7203.T")
@@ -42,7 +34,6 @@ export async function getStockQuote(
     const ticker = /^\d{4}$/.test(symbol) ? `${symbol}.T` : symbol;
 
     // quoteSummary ではなく quote を使用して主要な指標を一度に取得
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const result = (await yf.quote(ticker)) as any;
 
     if (!result) return null;
@@ -86,7 +77,6 @@ export async function getBatchStockQuotes(
 
   try {
     const tickers = symbols.map((s) => (/^\d{4}$/.test(s) ? `${s}.T` : s));
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const results = (await yf.quote(tickers)) as any[];
 
     const dataMap: Record<string, Partial<StockQuote>> = {};
