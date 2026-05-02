@@ -115,7 +115,7 @@ export function HolderStocksPage({
                   >
                     <div className="flex justify-between items-start">
                       <Link
-                        href={`/stockholders/list?stock_code=${item.secCode || ""}&edinet_code=${item.issuerEdinetCode || ""}`}
+                        href={`/entity/stock/${item.issuerEdinetCode || ""}?stock_code=${item.secCode || ""}`}
                         className="font-bold text-sm text-blue-600 hover:underline break-all flex-1"
                       >
                         {item.secCode
@@ -199,7 +199,7 @@ export function HolderStocksPage({
                       </TableCell>
                       <TableCell>
                         <Link
-                          href={`/stockholders/list?stock_code=${item.secCode || ""}&edinet_code=${item.issuerEdinetCode || ""}`}
+                          href={`/entity/stock/${item.issuerEdinetCode || ""}?stock_code=${item.secCode || ""}`}
                           className="font-medium text-xs text-blue-600 hover:underline break-all"
                         >
                           {toHalfWidth(item.issuerName || "")}

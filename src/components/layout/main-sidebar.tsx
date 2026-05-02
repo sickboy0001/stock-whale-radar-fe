@@ -21,14 +21,13 @@ import { Session } from "next-auth";
 
 const navItems = [
   { label: "ダッシュボード", href: "/", icon: LayoutDashboard },
-  { label: "Whale Lookup", href: "/radar/search", icon: Search },
-  { label: "銘柄検索", href: "/rader/Stocks", icon: Search },
-  { label: "クジラ検索", href: "/rader/whales", icon: Users },
+  { label: "Whale Lookup", href: "/search", icon: Search },
   {
     label: "クジラの動き",
-    href: "/rader/RecentWhaleMovements",
+    href: "/movements",
     icon: TrendingUp,
   },
+  { label: "マイ・バケット", href: "/buckets", icon: LayoutDashboard },
 ];
 
 const adminItems = [
@@ -38,8 +37,12 @@ const adminItems = [
     icon: Database,
     isExternal: true,
   },
-  { label: "インポート進捗", href: "/daily-status", icon: LayoutDashboard },
-  { label: "インポート履歴", href: "/recent-daily-status", icon: Activity },
+  {
+    label: "インポート進捗",
+    href: "/admin/import-status",
+    icon: LayoutDashboard,
+  },
+  { label: "インポート履歴", href: "/admin/import-history", icon: Activity },
 ];
 
 interface SidebarContentProps {

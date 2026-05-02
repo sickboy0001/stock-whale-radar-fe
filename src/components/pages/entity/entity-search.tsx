@@ -207,7 +207,7 @@ export const EntitySearch = () => {
             <div className="flex gap-2 mt-auto">
               {result.secCode && (
                 <Link
-                  href={`/stockholders/list?stock_code=${result.secCode}`}
+                  href={`/entity/stock/${result.secCode}?stock_code=${result.secCode}`}
                   className="flex-1 inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold py-2.5 px-4 rounded-xl transition-colors"
                 >
                   <Search size={14} />
@@ -215,7 +215,7 @@ export const EntitySearch = () => {
                 </Link>
               )}
               <Link
-                href={`/holderstocks/list?found_code=${result.code}`}
+                href={`/entity/holder/${result.code}`}
                 className="flex-1 inline-flex items-center justify-center gap-2 bg-zinc-900 hover:bg-zinc-800 text-white text-xs font-bold py-2.5 px-4 rounded-xl transition-colors"
               >
                 <ExternalLink size={14} />

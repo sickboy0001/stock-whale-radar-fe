@@ -1,4 +1,10 @@
-import { sqliteTable, text, integer, real } from "drizzle-orm/sqlite-core";
+import {
+  sqliteTable,
+  text,
+  integer,
+  real,
+  index,
+} from "drizzle-orm/sqlite-core";
 import { sql } from "drizzle-orm";
 
 export const users = sqliteTable("users", {
@@ -99,3 +105,31 @@ export const fundCodes = sqliteTable("fund_codes", {
   edinetCode: text("edinet_code"),
   issuerName: text("issuer_name"),
 });
+
+// 閲覧履歴テーブル
+export const viewHistory = sqliteTable(
+  "view_history",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    // ユーザー識別 (どちらか一方が値を持つ)
+    userId: text("user_id"), // ログインユーザーの ID
+    guestId: text("guest_id"), // 匿名ユーザー用の UUID (Cookie 管理)
+    // ターゲット情報
+    targetType: text("target_type", { enum: ["entity", "fund"] }).notNull(), // 'entity' (企業) または 'fund' (ファンド)
+    targetCode: text("target_code").notNull(), // edinet_code または fund_code
+    // 記録時刻 (TEXT 形式：YYYY-MM-DD HH:MM:SS.SSS)
+    viewedAt: text("viewed_at").notNull(),
+  },
+  (table) => ({
+    // インデックス定義
+    idxUserGuest: index("idx_view_history_user_guest").on(
+      table.userId,
+      table.guestId,
+    ),
+    idxViewedAt: index("idx_view_history_viewed_at").on(table.viewedAt),
+    idxTarget: index("idx_view_history_target").on(
+      table.targetType,
+      table.targetCode,
+    ),
+  }),
+);

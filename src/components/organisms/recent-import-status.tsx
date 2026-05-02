@@ -81,7 +81,7 @@ export const RecentImportStatus = ({
             </h2>
           </div>
           <Link
-            href="/daily-status"
+            href="/admin/import-status"
             className="text-xs text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1 font-medium"
           >
             詳細を表示 <ChevronRight size={14} />

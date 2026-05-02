@@ -134,7 +134,7 @@ export function DashboardPage() {
                   最新のインポート詳細 ({latestDate})
                 </h2>
                 <Link
-                  href="/recent-daily-status"
+                  href="/admin/import-history"
                   className="text-xs text-blue-600 hover:underline flex items-center gap-1 font-bold bg-blue-50 px-3 py-1.5 rounded-full border border-blue-100"
                 >
                   詳細ログを表示 <ChevronRight size={14} />
@@ -155,7 +155,7 @@ export function DashboardPage() {
                 インポートログ
               </h2>
               <Link
-                href="/recent-daily-status"
+                href="/admin/import-history"
                 className="text-xs text-blue-600 hover:underline flex items-center gap-1 font-bold"
               >
                 すべて見る <ChevronRight size={14} />

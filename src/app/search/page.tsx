@@ -1,4 +1,4 @@
-import { EntitySearch } from "@/components/pages/entity-search";
+import { EntitySearch } from "@/components/pages/entity/entity-search";
 
 export default function SearchPage() {
   return (

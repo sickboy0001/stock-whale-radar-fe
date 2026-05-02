@@ -1,4 +1,4 @@
-import { RecentDailyStatusPage } from "@/components/pages/recent-daily-status";
+import { RecentDailyStatusPage } from "@/components/pages/admin/recent-daily-status";
 
 export const dynamic = "force-dynamic";
 

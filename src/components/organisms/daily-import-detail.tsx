@@ -120,7 +120,7 @@ export function DailyImportDetail({ date, onClose }: DailyImportDetailProps) {
                     </TableCell>
                     <TableCell className="p-3 vertical-top">
                       <Link
-                        href={`/holderstocks/list?found_code=${detail.submitterEdinetCode}`}
+                        href={`/entity/holder/${detail.submitterEdinetCode}`}
                         className="font-bold text-[13px] leading-relaxed break-all overflow-hidden whitespace-normal text-blue-600 hover:underline"
                       >
                         {detail.submitterName
@@ -130,7 +130,7 @@ export function DailyImportDetail({ date, onClose }: DailyImportDetailProps) {
                     </TableCell>
                     <TableCell className="p-3 vertical-top">
                       <Link
-                        href={`/stockholders/list?stock_code=${detail.secCode || ""}&edinet_code=${detail.issuerEdinetCode || ""}`}
+                        href={`/entity/stock/${detail.issuerEdinetCode || ""}?stock_code=${detail.secCode || ""}`}
                         className="text-[13px] leading-relaxed break-all overflow-hidden whitespace-normal text-blue-600 hover:underline"
                       >
                         {detail.issuerName

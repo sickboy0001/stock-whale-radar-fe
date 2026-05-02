@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Card,
   CardContent,
@@ -26,12 +26,31 @@ import { StockInfo, HistoryItem } from "@/type/stock";
 interface StockholdersPageProps {
   stockInfo: StockInfo | null;
   history: HistoryItem[];
+  edinetCode?: string | null;
 }
 
 export function StockholdersPage({
   stockInfo,
   history,
+  edinetCode,
 }: StockholdersPageProps) {
+  // 閲覧履歴を記録
+  useEffect(() => {
+    if (edinetCode) {
+      fetch("/api/view-history", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          targetCode: edinetCode,
+          targetType: "entity",
+        }),
+      }).catch((err) => {
+        console.error("Failed to record view history:", err);
+      });
+    }
+  }, [edinetCode]);
   // 投資家別サマリー（最新の保有状況）
   const summary = React.useMemo(() => {
     const latestBySubmitter = new Map<string, HistoryItem>();
@@ -101,7 +120,7 @@ export function StockholdersPage({
                     className="flex flex-col border-b pb-2 last:border-0"
                   >
                     <Link
-                      href={`/holderstocks/list?found_code=${item.submitterEdinetCode}`}
+                      href={`/entity/holder/${item.submitterEdinetCode}`}
                       className="font-bold text-sm text-blue-600 hover:underline break-all"
                     >
                       {toHalfWidth(item.submitterName || "")}
@@ -182,7 +201,7 @@ export function StockholdersPage({
                       </TableCell>
                       <TableCell>
                         <Link
-                          href={`/holderstocks/list?found_code=${item.submitterEdinetCode}`}
+                          href={`/entity/holder/${item.submitterEdinetCode}`}
                           className="font-medium text-xs text-blue-600 hover:underline break-all"
                         >
                           {toHalfWidth(item.submitterName || "")}

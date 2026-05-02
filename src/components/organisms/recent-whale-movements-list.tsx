@@ -115,7 +115,7 @@ export async function RecentWhaleMovementsList({
                 </div>
                 <div className="flex items-center gap-1">
                   <Link
-                    href={`/stockholders/list?stock_code=${item.secCode?.substring(0, 4) || ""}&edinet_code=${item.issuerEdinetCode || ""}`}
+                    href={`/entity/stock/${item.issuerEdinetCode || ""}?stock_code=${item.secCode?.substring(0, 4) || ""}`}
                     className="font-bold text-blue-600 dark:text-blue-400 hover:underline transition-colors block leading-tight"
                   >
                     {toHalfWidth(item.issuerName || "")}
@@ -137,7 +137,7 @@ export async function RecentWhaleMovementsList({
               <td className="px-6 py-4">
                 <div className="flex items-center gap-1">
                   <Link
-                    href={`/holderstocks/list?found_code=${item.submitterEdinetCode || ""}`}
+                    href={`/entity/holder/${item.submitterEdinetCode || ""}`}
                     className="text-sm font-medium text-blue-600 dark:text-blue-400 hover:underline break-all"
                   >
                     {toHalfWidth(item.submitterName || "")}

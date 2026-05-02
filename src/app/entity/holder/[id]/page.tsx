@@ -1,15 +1,15 @@
 import { getHolderStocks } from "@/service/holderstocks";
-import { HolderStocksPage } from "@/components/pages/holderstocks";
+import { HolderStocksPage } from "@/components/pages/entity/holderstocks";
 
 interface PageProps {
-  searchParams: Promise<{
-    found_code?: string;
+  params: Promise<{
+    id: string;
   }>;
 }
 
-export default async function Page({ searchParams }: PageProps) {
-  const params = await searchParams;
-  const edinetCode = params.found_code;
+export default async function Page({ params }: PageProps) {
+  const { id } = await params;
+  const edinetCode = id;
 
   if (!edinetCode) {
     return (

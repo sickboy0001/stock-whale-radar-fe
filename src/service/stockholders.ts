@@ -21,11 +21,15 @@ export async function getStockholdersByStock(params: {
   if (secCode) {
     stockInfoConditions.push(eq(edinetCodes.secCode, secCode));
   }
-  const stockInfoResult = await db
-    .select()
-    .from(edinetCodes)
-    .where(or(...stockInfoConditions))
-    .get();
+
+  const stockInfoResult =
+    stockInfoConditions.length > 0
+      ? await db
+          .select()
+          .from(edinetCodes)
+          .where(or(...stockInfoConditions))
+          .get()
+      : null;
 
   // yfinance API から追加の銘柄情報を取得してマージ
   const stockInfo: (typeof edinetCodes.$inferSelect & StockQuote) | null =
@@ -52,24 +56,27 @@ export async function getStockholdersByStock(params: {
     historyConditions.push(eq(documents.secCode, targetSecCode));
   }
 
-  const history = await db
-    .select({
-      obligationDate: ownershipReports.obligationDate,
-      submitterName: documents.submitterName,
-      submitterEdinetCode: documents.submitterEdinetCode,
-      holdingRatio: ownershipReports.holdingRatio,
-      prevHoldingRatio: ownershipReports.prevHoldingRatio,
-      ratioDiff: sql<
-        number | null
-      >`CASE WHEN ${ownershipReports.holdingRatio} IS NOT NULL AND ${ownershipReports.prevHoldingRatio} IS NOT NULL THEN ${ownershipReports.holdingRatio} - ${ownershipReports.prevHoldingRatio} ELSE NULL END`,
-      holdingPurpose: ownershipReports.holdingPurpose,
-      docDescription: documents.docDescription,
-      docId: documents.docId,
-    })
-    .from(ownershipReports)
-    .innerJoin(documents, eq(ownershipReports.docId, documents.docId))
-    .where(or(...historyConditions))
-    .orderBy(desc(ownershipReports.obligationDate));
+  const history =
+    historyConditions.length > 0
+      ? await db
+          .select({
+            obligationDate: ownershipReports.obligationDate,
+            submitterName: documents.submitterName,
+            submitterEdinetCode: documents.submitterEdinetCode,
+            holdingRatio: ownershipReports.holdingRatio,
+            prevHoldingRatio: ownershipReports.prevHoldingRatio,
+            ratioDiff: sql<
+              number | null
+            >`CASE WHEN ${ownershipReports.holdingRatio} IS NOT NULL AND ${ownershipReports.prevHoldingRatio} IS NOT NULL THEN ${ownershipReports.holdingRatio} - ${ownershipReports.prevHoldingRatio} ELSE NULL END`,
+            holdingPurpose: ownershipReports.holdingPurpose,
+            docDescription: documents.docDescription,
+            docId: documents.docId,
+          })
+          .from(ownershipReports)
+          .innerJoin(documents, eq(ownershipReports.docId, documents.docId))
+          .where(or(...historyConditions))
+          .orderBy(desc(ownershipReports.obligationDate))
+      : [];
 
   return {
     stockInfo,

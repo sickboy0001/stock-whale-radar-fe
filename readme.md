@@ -58,15 +58,17 @@ src/
 ├── app/                          # Next.js App Router
 │   ├── layout.tsx                # 全体レイアウト
 │   ├── page.tsx                  # ホームページ
-│   ├── api/                      # API ルート
-│   ├── rader/                    # メイン機能
-│   │   ├── Stocks/               # 銘柄指定での一覧
-│   │   └── whales/               # 提出者ベースでの一覧
-│   ├── (user)                    # ログイン済み者向け
-│   │   └── buckets/              # Buckets管理
-│   ├── Admin/                    # 管理者用画面
-│   └── chart                     # ログイン済み者向け
-│       └── page.tsx              # チャートの表示
+│   ├── page.tsx
+│   ├── search/                   # Whale Lookup（統合検索）
+│   ├── movements/                # クジラの動き
+│   ├── buckets/                  #
+│   ├── entity/
+│   │   ├── holder/[id]/          # 投資家詳細
+│   │   └── stock/[id]/           # 銘柄詳細
+│   ├── admin/
+│   │   ├── import-status/
+│   │   └── import-history/
+│   └── api/
 ├── components/                   # React コンポーネント
 │   ├── layout/                   # レイアウトコンポーネント
 │   ├── organisms/                # 複合コンポーネント

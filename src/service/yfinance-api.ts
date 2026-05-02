@@ -1,4 +1,8 @@
-import yf from "yahoo-finance2";
+import YahooFinance from "yahoo-finance2";
+
+// yahoo-finance2 v3 ではインスタンス化が必要
+// https://github.com/gadicc/yahoo-finance2/blob/dev/docs/UPGRADING.md
+const yf = new YahooFinance();
 
 export interface StockQuote {
   marketCap?: number;
@@ -29,6 +33,11 @@ export interface StockQuote {
 export async function getStockQuote(
   symbol: string,
 ): Promise<StockQuote | null> {
+  if (!yf || typeof yf.quote !== "function") {
+    console.error("Yahoo Finance client is not initialized correctly");
+    return null;
+  }
+
   try {
     // 4桁の数字のみの場合は .T (東証) をデフォルトで付与
     const ticker = /^\d{4}$/.test(symbol) ? `${symbol}.T` : symbol;
@@ -60,8 +69,11 @@ export async function getStockQuote(
       fiftyTwoWeekHigh: result.fiftyTwoWeekHigh,
       fiftyTwoWeekLow: result.fiftyTwoWeekLow,
     };
-  } catch (error) {
-    console.error(`Failed to fetch yfinance data for ${symbol}:`, error);
+  } catch (error: any) {
+    console.error(
+      `Failed to fetch yfinance data for ${symbol}:`,
+      error?.message || error,
+    );
     return null;
   }
 }
