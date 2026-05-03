@@ -2,8 +2,8 @@
 
 import React, { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { RecentImportStatus } from "@/components/organisms/recent-import-status";
-import { DailyImportDetail } from "@/components/organisms/daily-import-detail";
+import { RecentImportStatus } from "@/components/organisms/admin/recent-import-status";
+import { DailyImportDetail } from "@/components/organisms/admin/daily-import-detail";
 import { getRecentImportStatus } from "@/service/daily-import";
 import {
   TrendingUp,

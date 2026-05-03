@@ -28,7 +28,7 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Search } from "lucide-react";
-import { DailyImportDetail } from "@/components/organisms/daily-import-detail";
+import { DailyImportDetail } from "@/components/organisms/admin/daily-import-detail";
 
 type DailyImportStatus = {
   targetDate: string;

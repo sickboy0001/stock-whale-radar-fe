@@ -1,4 +1,5 @@
 import YahooFinance from "yahoo-finance2";
+import { ChartDataPoint } from "@/type/stock";
 
 // yahoo-finance2 v3 ではインスタンス化が必要
 // https://github.com/gadicc/yahoo-finance2/blob/dev/docs/UPGRADING.md
@@ -110,5 +111,44 @@ export async function getBatchStockQuotes(
   } catch (error) {
     console.error("Failed to fetch batch yfinance data:", error);
     return {};
+  }
+}
+
+/**
+ * Lightweight Charts 用のチャートデータを取得します。
+ * @param symbol 証券コード (4桁)
+ */
+export async function getChartData(symbol: string): Promise<ChartDataPoint[]> {
+  try {
+    const ticker = /^\d{4}$/.test(symbol) ? `${symbol}.T` : symbol;
+
+    // 90日前の日付を計算 (移動平均線計算のために長めに取得)
+    const to = new Date();
+    const from = new Date();
+    from.setDate(to.getDate() - 90);
+
+    const result = await yf.chart(ticker, {
+      period1: from,
+      interval: "1d",
+    });
+
+    if (!result || !result.quotes) return [];
+
+    // Lightweight Charts形式 (time, open, high, low, close, volume) に変換
+    return result.quotes
+      .filter((d: any) => d.date && d.open !== null && d.close !== null)
+      .map((d: any) => ({
+        time: d.date.toISOString().split("T")[0], // YYYY-MM-DD
+        open: d.open,
+        high: d.high,
+        low: d.low,
+        close: d.close,
+        volume: d.volume || 0,
+      }));
+    // slice(-30) はコンポーネント側で行うか、ここで行うか。
+    // 移動平均線の計算には全期間が必要なので、ここでは全件返す。
+  } catch (error) {
+    console.error(`Failed to fetch chart data for ${symbol}:`, error);
+    return [];
   }
 }

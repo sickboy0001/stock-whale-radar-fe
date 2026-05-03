@@ -1,5 +1,5 @@
 import { RecentWhaleMovements } from "@/components/pages/recent-whale-movements";
-import { RecentWhaleMovementsList } from "@/components/organisms/recent-whale-movements-list";
+import { RecentWhaleMovementsList } from "@/components/organisms/entity/recent-whale-movements-list";
 import { Suspense } from "react";
 
 export const dynamic = "force-dynamic";

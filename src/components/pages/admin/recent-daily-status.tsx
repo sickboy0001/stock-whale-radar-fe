@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
-import { RecentImportStatus } from "@/components/organisms/recent-import-status";
-import { DailyImportDetail } from "@/components/organisms/daily-import-detail";
+import { RecentImportStatus } from "@/components/organisms/admin/recent-import-status";
+import { DailyImportDetail } from "@/components/organisms/admin/daily-import-detail";
 import { Search } from "lucide-react";
 
 export function RecentDailyStatusPage() {

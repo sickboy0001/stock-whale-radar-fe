@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { Clock, Loader2, ChevronRight, Search } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
-import { DailyImportDetail } from "@/components/organisms/daily-import-detail";
+import { DailyImportDetail } from "@/components/organisms/admin/daily-import-detail";
 import { getRecentImportStatus } from "@/service/daily-import";
 
 type ImportStatus = {

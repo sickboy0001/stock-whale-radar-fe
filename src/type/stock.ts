@@ -36,3 +36,12 @@ export type HistoryItem = {
   docDescription: string | null;
   docId: string | null;
 };
+
+export type ChartDataPoint = {
+  time: string;
+  open: number;
+  high: number;
+  low: number;
+  close: number;
+  volume: number;
+};

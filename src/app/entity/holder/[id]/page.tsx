@@ -1,5 +1,5 @@
 import { getHolderStocks } from "@/service/holderstocks";
-import { HolderStocksPage } from "@/components/pages/entity/holderstocks";
+import { HolderStocksPage } from "@/components/pages/entity/holder";
 
 interface PageProps {
   params: Promise<{

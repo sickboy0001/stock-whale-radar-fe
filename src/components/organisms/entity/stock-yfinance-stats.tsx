@@ -13,9 +13,12 @@ import {
 import { StockInfo } from "@/type/stock";
 import { Button } from "@/components/ui/button";
 import { formatWithUnit, formatCurrency } from "@/lib/utils";
+import { getStockholdersByStock } from "@/service/stockholders";
 
 interface StockYFinanceStatsProps {
-  stockInfo: StockInfo;
+  edinetCode?: string | null;
+  secCode?: string | null;
+  initialData?: StockInfo | null;
 }
 
 function DetailItem({ label, value }: { label: string; value: string }) {
@@ -29,8 +32,52 @@ function DetailItem({ label, value }: { label: string; value: string }) {
   );
 }
 
-export function StockYFinanceStats({ stockInfo }: StockYFinanceStatsProps) {
+export function StockYFinanceStats({
+  edinetCode,
+  secCode,
+  initialData,
+}: StockYFinanceStatsProps) {
   const [showDetails, setShowDetails] = React.useState(false);
+  const [stockInfo, setStockInfo] = React.useState<StockInfo | null>(
+    initialData || null,
+  );
+  const [loading, setLoading] = React.useState(!initialData);
+
+  React.useEffect(() => {
+    const fetchStockInfo = async () => {
+      if (!edinetCode && !secCode) return;
+      if (initialData) return;
+
+      setLoading(true);
+      try {
+        const data = await getStockholdersByStock({
+          edinetCode: edinetCode || undefined,
+          secCode: secCode || undefined,
+        });
+        if (data) {
+          setStockInfo(data.stockInfo);
+        }
+      } catch (error) {
+        console.error("Failed to fetch stock info:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchStockInfo();
+  }, [edinetCode, secCode, initialData]);
+
+  if (loading) {
+    return (
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 animate-pulse">
+        {[...Array(4)].map((_, i) => (
+          <Card key={i} className="h-24 bg-zinc-100 dark:bg-zinc-800" />
+        ))}
+      </div>
+    );
+  }
+
+  if (!stockInfo) return null;
 
   return (
     <div className="space-y-4">

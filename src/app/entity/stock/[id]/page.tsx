@@ -1,5 +1,5 @@
 import { getStockholdersByStock } from "@/service/stockholders";
-import { StockholdersPage } from "@/components/pages/entity/stockholders";
+import { StockholdersPage } from "@/components/pages/entity/stock";
 
 interface PageProps {
   params: Promise<{
@@ -20,8 +20,7 @@ export default async function Page({ params, searchParams }: PageProps) {
 
   return (
     <StockholdersPage
-      stockInfo={data?.stockInfo || null}
-      history={data?.history || []}
+      initialStockInfo={data?.stockInfo || null}
       edinetCode={id}
     />
   );
