@@ -3,9 +3,37 @@ import { db } from "@/db";
 import { viewHistory } from "@/db/schema";
 import { nanoid } from "nanoid";
 import { eq, and, gte } from "drizzle-orm";
+import { getTrendingWhales } from "@/service/view-history";
 
 const GUEST_COOKIE_NAME = "radar_guest_id";
 const GUEST_COOKIE_AGE = 60 * 60 * 24 * 365; // 1 年
+
+export async function GET(req: NextRequest) {
+  try {
+    const { searchParams } = new URL(req.url);
+    const period = (searchParams.get("period") as "24h" | "7d" | "30d") || "7d";
+    const limit = parseInt(searchParams.get("limit") || "10", 10);
+    const targetType = searchParams.get("targetType") as
+      | "entity"
+      | "fund"
+      | "stock"
+      | null;
+
+    const trending = await getTrendingWhales(
+      period,
+      limit,
+      targetType || undefined,
+    );
+
+    return NextResponse.json({ trending });
+  } catch (error) {
+    console.error("Failed to fetch trending data:", error);
+    return NextResponse.json(
+      { error: "Failed to fetch trending data" },
+      { status: 500 },
+    );
+  }
+}
 
 export async function POST(req: NextRequest) {
   try {

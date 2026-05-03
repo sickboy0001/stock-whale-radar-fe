@@ -115,7 +115,9 @@ export const viewHistory = sqliteTable(
     userId: text("user_id"), // ログインユーザーの ID
     guestId: text("guest_id"), // 匿名ユーザー用の UUID (Cookie 管理)
     // ターゲット情報
-    targetType: text("target_type", { enum: ["entity", "fund"] }).notNull(), // 'entity' (企業) または 'fund' (ファンド)
+    targetType: text("target_type", {
+      enum: ["entity", "fund", "stock"],
+    }).notNull(), // 'entity' (企業/投資家), 'fund' (ファンド), 'stock' (銘柄)
     targetCode: text("target_code").notNull(), // edinet_code または fund_code
     // 記録時刻 (TEXT 形式：YYYY-MM-DD HH:MM:SS.SSS)
     viewedAt: text("viewed_at").notNull(),

@@ -35,6 +35,12 @@ export type HistoryItem = {
   holdingPurpose: string | null;
   docDescription: string | null;
   docId: string | null;
+  // 追加フィールド：保有株数と保有金額
+  holdingShares?: number | null;
+  holdingValue?: number | null;
+  // 株価データ（保有金額計算用）
+  prevClose?: number | null;
+  sharesOutstanding?: number | null;
 };
 
 export type ChartDataPoint = {

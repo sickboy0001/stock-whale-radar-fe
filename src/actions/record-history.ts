@@ -11,9 +11,17 @@ const GUEST_COOKIE_AGE = 60 * 60 * 24 * 365; // 1 年
 
 export interface RecordHistoryParams {
   targetCode: string;
-  targetType: "entity" | "fund";
+  targetType: "entity" | "fund" | "stock";
   userId?: string | null; // ログインユーザーの場合はこれを渡す
 }
+
+// データベースの CHECK 制約に適合する target_type のマッピング
+const TARGET_TYPE_MAP: Record<"entity" | "fund" | "stock", "entity" | "fund"> =
+  {
+    entity: "entity",
+    fund: "fund",
+    stock: "entity", // stock は entity として記録
+  };
 
 /**
  * 閲覧履歴を記録する Server Action
@@ -71,10 +79,14 @@ export async function recordViewHistory({
     // 新規記録を挿入 (viewed_at は TEXT 形式：YYYY-MM-DD HH:MM:SS.SSS)
     const now = new Date();
     const viewedAtStr = now.toISOString().replace("T", " ").slice(0, 23);
+
+    // target_type をデータベース制約に適合するようにマッピング
+    const dbTargetType = TARGET_TYPE_MAP[targetType];
+
     await db.insert(viewHistory).values({
       userId: userId ?? null,
       guestId: guestId ?? null,
-      targetType,
+      targetType: dbTargetType,
       targetCode,
       viewedAt: viewedAtStr,
     });

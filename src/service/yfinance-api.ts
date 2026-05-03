@@ -125,7 +125,7 @@ export async function getChartData(symbol: string): Promise<ChartDataPoint[]> {
     // 90日前の日付を計算 (移動平均線計算のために長めに取得)
     const to = new Date();
     const from = new Date();
-    from.setDate(to.getDate() - 90);
+    from.setDate(to.getDate() - 365);
 
     const result = await yf.chart(ticker, {
       period1: from,

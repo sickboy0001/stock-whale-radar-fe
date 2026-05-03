@@ -1,5 +1,7 @@
 import { getHolderStocks } from "@/service/holderstocks";
 import { HolderStocksPage } from "@/components/pages/entity/holder";
+import { auth } from "@/auth";
+import { recordViewHistory } from "@/actions/record-history";
 
 interface PageProps {
   params: Promise<{
@@ -9,6 +11,7 @@ interface PageProps {
 
 export default async function Page({ params }: PageProps) {
   const { id } = await params;
+  const session = await auth();
   const edinetCode = id;
 
   if (!edinetCode) {
@@ -18,6 +21,14 @@ export default async function Page({ params }: PageProps) {
       </div>
     );
   }
+
+  // 閲覧履歴を記録
+  // 非同期で実行するが、画面表示を待たせない
+  recordViewHistory({
+    targetCode: edinetCode,
+    targetType: "entity",
+    userId: session?.user?.id,
+  }).catch(console.error);
 
   const data = await getHolderStocks(edinetCode);
 

@@ -69,7 +69,7 @@ export function StockholdersPage({
     <div className="container mx-auto py-6 space-y-8">
       <div className="flex flex-col gap-4">
         <h1 className="text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100">
-          企業の保有者別サマリーと報告履歴
+          銘柄詳細分析 (Stock Insights)
         </h1>
         {loading ? (
           <div className="h-10 w-64 bg-zinc-100 dark:bg-zinc-800 animate-pulse rounded" />

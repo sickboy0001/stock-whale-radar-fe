@@ -1,6 +1,6 @@
 import { db } from "@/db";
 import { viewHistory } from "@/db/schema";
-import { desc, sql, and, eq, gte } from "drizzle-orm";
+import { desc, sql, and, eq, or } from "drizzle-orm";
 import { edinetCodes } from "@/db/schema";
 import { fundCodes } from "@/db/schema";
 
@@ -8,13 +8,11 @@ export interface GetHistoryParams {
   userId?: string | null;
   guestId?: string | null;
   limit?: number;
+  targetType?: "entity" | "fund" | "stock";
 }
 
 export interface HistoryItem {
-  id: number;
-  userId: string | null;
-  guestId: string | null;
-  targetType: "entity" | "fund";
+  targetType: "entity" | "fund" | "stock";
   targetCode: string;
   viewedAt: string; // TEXT 形式：YYYY-MM-DD HH:MM:SS.SSS
   name?: string; // 企業名またはファンド名
@@ -22,7 +20,7 @@ export interface HistoryItem {
 
 export interface TrendingItem {
   targetCode: string;
-  targetType: "entity" | "fund";
+  targetType: "entity" | "fund" | "stock";
   viewCount: number;
   latestView: string; // TEXT 形式：YYYY-MM-DD HH:MM:SS.SSS
   name?: string; // 企業名またはファンド名
@@ -35,7 +33,8 @@ export interface TrendingItem {
 export async function getPersonalHistory({
   userId,
   guestId,
-  limit = 10,
+  limit = 20,
+  targetType,
 }: GetHistoryParams): Promise<HistoryItem[]> {
   if (!userId && !guestId) {
     return [];
@@ -43,39 +42,53 @@ export async function getPersonalHistory({
 
   // 個人履歴の取得 (重複を除去し、最新の日付でソート)
   const history = await db
-    .select()
+    .select({
+      targetType: viewHistory.targetType,
+      targetCode: viewHistory.targetCode,
+      viewedAt: sql<string>`MAX(${viewHistory.viewedAt})`.as("last_viewed"),
+    })
     .from(viewHistory)
     .where(
       and(
-        userId ? eq(viewHistory.userId, userId) : undefined,
-        guestId ? eq(viewHistory.guestId, guestId) : undefined,
+        or(
+          userId ? eq(viewHistory.userId, userId) : undefined,
+          guestId ? eq(viewHistory.guestId, guestId) : undefined,
+        ),
+        targetType ? eq(viewHistory.targetType, targetType) : undefined,
       ),
     )
-    .orderBy(desc(viewHistory.viewedAt))
-    .limit(limit * 2); // 重複を考慮して多めに取得
-
-  // 重複を除去 (targetType + targetCode で最新の 1 つだけ残す)
-  const uniqueMap = new Map<string, (typeof history)[0]>();
-  for (const item of history) {
-    const key = `${item.targetType}-${item.targetCode}`;
-    if (!uniqueMap.has(key)) {
-      uniqueMap.set(key, item);
-    }
-  }
-
-  const uniqueHistory = Array.from(uniqueMap.values()).slice(0, limit);
+    .groupBy(viewHistory.targetType, viewHistory.targetCode)
+    .orderBy(desc(sql`last_viewed`))
+    .limit(limit);
 
   // 名前を取得するために JOIN
   const result: HistoryItem[] = [];
-  for (const item of uniqueHistory) {
+  for (const item of history) {
     let name: string | undefined;
-    if (item.targetType === "entity") {
+    let inferredType: "entity" | "fund" | "stock" = item.targetType as
+      | "entity"
+      | "fund"
+      | "stock";
+
+    if (item.targetType === "entity" || item.targetType === "stock") {
       const entity = await db
-        .select({ submitterName: edinetCodes.submitterName })
+        .select({
+          submitterName: edinetCodes.submitterName,
+          secCode: edinetCodes.secCode,
+        })
         .from(edinetCodes)
         .where(eq(edinetCodes.edinetCode, item.targetCode))
         .limit(1);
-      name = entity[0]?.submitterName;
+
+      if (entity[0]) {
+        name = entity[0].submitterName;
+        // secCode があれば、それは「銘柄」として扱える (既存データの entity 救済)
+        if (entity[0].secCode) {
+          inferredType = "stock";
+        } else {
+          inferredType = "entity";
+        }
+      }
     } else if (item.targetType === "fund") {
       const fund = await db
         .select({ fundName: fundCodes.fundName })
@@ -86,7 +99,9 @@ export async function getPersonalHistory({
     }
 
     result.push({
-      ...item,
+      targetType: inferredType,
+      targetCode: item.targetCode,
+      viewedAt: item.viewedAt,
       name: name || item.targetCode,
     });
   }
@@ -96,16 +111,15 @@ export async function getPersonalHistory({
 
 /**
  * 注目ランキング (頻度ベース) を取得
- * @param period '1w' | '1m' | '3m'
+ * @param period '24h' | '7d' | '30d'
  */
 export async function getTrendingWhales(
-  period: "1w" | "1m" | "3m",
+  period: "24h" | "7d" | "30d",
   limit: number = 10,
+  targetType?: "entity" | "fund" | "stock",
 ): Promise<TrendingItem[]> {
-  const days = period === "1w" ? 7 : period === "1m" ? 30 : 90;
-
-  // SQLite の日付計算を使用して期間を絞り込み
-  const startDate = sql`date('now', '-${days} days')`;
+  const intervalMap = { "24h": "-1 day", "7d": "-7 days", "30d": "-30 days" };
+  const interval = intervalMap[period];
 
   // 集計クエリ
   const aggregated = await db
@@ -116,7 +130,12 @@ export async function getTrendingWhales(
       latestView: sql<string>`MAX(${viewHistory.viewedAt})`.as("latest_view"),
     })
     .from(viewHistory)
-    .where(gte(sql`date(${viewHistory.viewedAt})`, startDate))
+    .where(
+      and(
+        sql`${viewHistory.viewedAt} >= datetime('now', ${interval})`,
+        targetType ? eq(viewHistory.targetType, targetType) : undefined,
+      ),
+    )
     .groupBy(viewHistory.targetCode, viewHistory.targetType)
     .orderBy(desc(sql`view_count`))
     .limit(limit);
@@ -125,13 +144,29 @@ export async function getTrendingWhales(
   const result: TrendingItem[] = [];
   for (const item of aggregated) {
     let name: string | undefined;
-    if (item.targetType === "entity") {
+    let inferredType: "entity" | "fund" | "stock" = item.targetType as
+      | "entity"
+      | "fund"
+      | "stock";
+
+    if (item.targetType === "entity" || item.targetType === "stock") {
       const entity = await db
-        .select({ submitterName: edinetCodes.submitterName })
+        .select({
+          submitterName: edinetCodes.submitterName,
+          secCode: edinetCodes.secCode,
+        })
         .from(edinetCodes)
         .where(eq(edinetCodes.edinetCode, item.targetCode))
         .limit(1);
-      name = entity[0]?.submitterName;
+
+      if (entity[0]) {
+        name = entity[0].submitterName;
+        if (entity[0].secCode) {
+          inferredType = "stock";
+        } else {
+          inferredType = "entity";
+        }
+      }
     } else if (item.targetType === "fund") {
       const fund = await db
         .select({ fundName: fundCodes.fundName })
@@ -142,7 +177,10 @@ export async function getTrendingWhales(
     }
 
     result.push({
-      ...item,
+      targetCode: item.targetCode,
+      targetType: inferredType,
+      viewCount: item.viewCount,
+      latestView: item.latestView,
       name: name || item.targetCode,
     });
   }

@@ -16,9 +16,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { TrendingUp, TrendingDown, Briefcase } from "lucide-react";
+import { TrendingUp, TrendingDown, Briefcase, Users } from "lucide-react";
 import { toHalfWidth, formatWithUnit } from "@/lib/utils";
 import Link from "next/link";
+import { OwnershipHolderChart } from "@/components/charts/OwnershipHolderChart";
 
 export type HistoryItem = {
   obligationDate: string | null;
@@ -65,6 +66,26 @@ export function HolderStock({ history }: HolderStockProps) {
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      {/* ポートフォリオ推移 */}
+      <Card className="lg:col-span-3">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Users className="w-5 h-5 text-blue-500" />
+            ポートフォリオ推移（過去1年間）
+          </CardTitle>
+          <CardDescription>
+            直近1年間の主要保有銘柄の比率推移です。
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          {history.length > 0 && (
+            <div className="mb-4">
+              <OwnershipHolderChart history={history} />
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
       <Card className="lg:col-span-1">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">

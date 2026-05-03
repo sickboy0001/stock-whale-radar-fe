@@ -49,10 +49,29 @@ export async function getHolderStocks(edinetCode: string) {
   const history = historyRaw.map((item) => {
     const pureSecCode = item.secCode?.substring(0, 4);
     const yfData = pureSecCode ? yfDataMap[pureSecCode] : null;
+
+    // 保有株数と保有金額を計算
+    const sharesOutstanding = yfData?.sharesOutstanding;
+    const prevClose = yfData?.prevClose;
+    const holdingRatio = item.holdingRatio;
+
+    let holdingShares: number | null = null;
+    let holdingValue: number | null = null;
+
+    if (sharesOutstanding != null && holdingRatio != null) {
+      holdingShares = sharesOutstanding * (holdingRatio / 100);
+    }
+
+    if (holdingShares != null && prevClose != null) {
+      holdingValue = holdingShares * prevClose;
+    }
+
     return {
       ...item,
-      sharesOutstanding: yfData?.sharesOutstanding,
-      prevClose: yfData?.prevClose,
+      sharesOutstanding,
+      prevClose,
+      holdingShares,
+      holdingValue,
     };
   });
 

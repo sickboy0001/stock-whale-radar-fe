@@ -231,3 +231,22 @@ CREATE TABLE import_daily_status (
   error_message     TEXT
 );
 ```
+
+### view_history
+
+```sql
+-- 閲覧履歴テーブルの作成
+CREATE TABLE view_history (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  user_id TEXT,
+  guest_id TEXT,
+  target_type TEXT NOT NULL CHECK(target_type IN ('entity', 'fund')),
+  target_code TEXT NOT NULL,
+  viewed_at TEXT DEFAULT (datetime('now'))
+);
+
+-- インデックスの作成
+CREATE INDEX idx_view_history_user_guest ON view_history(user_id, guest_id);
+CREATE INDEX idx_view_history_viewed_at ON view_history(viewed_at);
+CREATE INDEX idx_view_history_target ON view_history(target_type, target_code);
+```

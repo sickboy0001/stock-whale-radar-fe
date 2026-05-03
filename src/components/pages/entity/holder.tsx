@@ -27,7 +27,7 @@ export function HolderStocksPage({
     <div className="container mx-auto py-6 space-y-8">
       <div className="flex flex-col gap-4">
         <h1 className="text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100">
-          投資家別ポートフォリオ動向
+          投資家詳細分析（Investor Insights）
         </h1>
         {holderInfo ? (
           <div className="flex items-center gap-4 text-lg">

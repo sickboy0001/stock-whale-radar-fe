@@ -27,6 +27,7 @@ const navItems = [
     href: "/movements",
     icon: TrendingUp,
   },
+  { label: "アクティビティ", href: "/activity", icon: Activity },
   { label: "マイ・バケット", href: "/buckets", icon: LayoutDashboard },
 ];
 
