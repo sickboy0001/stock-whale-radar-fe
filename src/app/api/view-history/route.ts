@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/db";
-import { viewHistory } from "@/db/schema";
+import { viewHistory, edinetCodes } from "@/db/schema";
 import { nanoid } from "nanoid";
 import { eq, and, gte } from "drizzle-orm";
 import { getTrendingWhales } from "@/service/view-history";
@@ -70,6 +70,27 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    let finalTargetCode = targetCode;
+    let finalTargetType = targetType;
+
+    // entity (EDINETコード) の場合、証券コードへの変換を試みる
+    if (targetType === "entity") {
+      const edinetInfo = await db
+        .select({ secCode: edinetCodes.secCode })
+        .from(edinetCodes)
+        .where(eq(edinetCodes.edinetCode, targetCode))
+        .limit(1);
+
+      if (edinetInfo.length > 0 && edinetInfo[0].secCode) {
+        // 証券コードがある場合は stock に変換
+        // secCode は通常 5桁（例: 13760）なので、最初の 4桁を使用
+        const rawCode = edinetInfo[0].secCode;
+        finalTargetCode =
+          rawCode.length >= 4 ? rawCode.substring(0, 4) : rawCode;
+        finalTargetType = "stock";
+      }
+    }
+
     // 直近 1 分以内に同じ記録がある場合はスキップ
     const oneMinuteAgoStr = new Date(Date.now() - 60 * 1000)
       .toISOString()
@@ -83,8 +104,8 @@ export async function POST(req: NextRequest) {
           userId
             ? eq(viewHistory.userId, userId)
             : eq(viewHistory.guestId, guestId || ""),
-          eq(viewHistory.targetCode, targetCode),
-          eq(viewHistory.targetType, targetType),
+          eq(viewHistory.targetCode, finalTargetCode),
+          eq(viewHistory.targetType, finalTargetType),
           gte(viewHistory.viewedAt, oneMinuteAgoStr),
         ),
       )
@@ -115,8 +136,8 @@ export async function POST(req: NextRequest) {
     await db.insert(viewHistory).values({
       userId: userId ?? null,
       guestId: guestId ?? null,
-      targetType,
-      targetCode,
+      targetType: finalTargetType,
+      targetCode: finalTargetCode,
       viewedAt: viewedAtStr,
     });
 
