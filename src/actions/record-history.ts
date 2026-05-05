@@ -2,6 +2,7 @@
 
 import { db } from "@/db";
 import { viewHistory } from "@/db/schema";
+import { auth } from "@/auth";
 import { cookies } from "next/headers";
 import { nanoid } from "nanoid";
 import { eq, and, gte, sql } from "drizzle-orm";
@@ -29,9 +30,11 @@ const TARGET_TYPE_MAP: Record<"entity" | "fund" | "stock", "entity" | "fund"> =
 export async function recordViewHistory({
   targetCode,
   targetType,
-  userId,
+  userId: providedUserId,
 }: RecordHistoryParams): Promise<{ success: boolean; error?: string }> {
   try {
+    const session = await auth();
+    const userId = session?.user?.id || providedUserId;
     let guestId: string | null = null;
 
     if (!userId) {

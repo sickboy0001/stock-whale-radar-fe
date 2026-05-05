@@ -26,14 +26,22 @@ import { OwnershipStackedChart } from "@/components/charts/OwnershipStackedChart
 interface StockHolderProps {
   stockInfo: StockInfo | null;
   edinetCode?: string | null;
+  initialHistory?: HistoryItem[];
 }
 
-export function StockHolder({ stockInfo, edinetCode }: StockHolderProps) {
-  const [history, setHistory] = React.useState<HistoryItem[]>([]);
+export function StockHolder({
+  stockInfo,
+  edinetCode,
+  initialHistory,
+}: StockHolderProps) {
+  const [history, setHistory] = React.useState<HistoryItem[]>(
+    initialHistory || [],
+  );
   const [loading, setLoading] = React.useState(false);
 
   React.useEffect(() => {
     const fetchHistory = async () => {
+      if (initialHistory && initialHistory.length > 0) return;
       if (!edinetCode && !stockInfo?.secCode) return;
 
       setLoading(true);

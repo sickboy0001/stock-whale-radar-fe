@@ -72,7 +72,7 @@ export async function searchWhales(query: string): Promise<SearchResult[]> {
       name: e.name,
       subName: e.subName ?? undefined,
       industryOrCategory: e.industry ?? undefined,
-      secCode: e.secCode ?? undefined,
+      secCode: e.secCode ? e.secCode.substring(0, 4) : undefined,
     })),
     ...funds.map((f) => ({
       type: "fund" as const,

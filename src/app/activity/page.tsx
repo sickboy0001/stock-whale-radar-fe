@@ -1,7 +1,7 @@
 import { auth } from "@/auth";
 import { cookies } from "next/headers";
 import { getPersonalHistory, getTrendingWhales } from "@/service/view-history";
-import { ActivityPage } from "@/components/pages/ActivityPage";
+import { ActivityPage } from "@/components/pages/activity/ActivityPage";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {

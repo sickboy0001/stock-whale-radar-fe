@@ -1,5 +1,6 @@
 import NextAuth from "next-auth";
 import Google from "next-auth/providers/google";
+import { nanoid } from "nanoid";
 import { db } from "@/db";
 import { users } from "@/db/schema";
 import { eq } from "drizzle-orm";
@@ -24,7 +25,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         if (!existingUser) {
           // Create new user
           await db.insert(users).values({
-            id: user.id || crypto.randomUUID(),
+            id: nanoid(),
             email: user.email,
             displayName: user.name,
             imageUrl: user.image,

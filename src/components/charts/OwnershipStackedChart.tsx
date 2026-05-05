@@ -249,6 +249,7 @@ export function OwnershipStackedChart({ history }: Props) {
                 stackId="a"
                 fill={COLORS[index % COLORS.length]}
                 radius={[0, 0, 0, 0]}
+                isAnimationActive={false}
               />
             ))}
           </BarChart>

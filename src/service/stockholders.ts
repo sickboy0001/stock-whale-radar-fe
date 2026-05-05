@@ -19,7 +19,9 @@ export async function getStockholdersByStock(params: {
     stockInfoConditions.push(eq(edinetCodes.edinetCode, edinetCode));
   }
   if (secCode) {
-    stockInfoConditions.push(eq(edinetCodes.secCode, secCode));
+    // 証券コードが4桁の場合は末尾に0を付与（DBは5桁のため）
+    const dbSecCode = secCode.length === 4 ? `${secCode}0` : secCode;
+    stockInfoConditions.push(eq(edinetCodes.secCode, dbSecCode));
   }
 
   const stockInfoResult =
@@ -53,7 +55,9 @@ export async function getStockholdersByStock(params: {
     historyConditions.push(eq(documents.issuerEdinetCode, targetEdinetCode));
   }
   if (targetSecCode) {
-    historyConditions.push(eq(documents.secCode, targetSecCode));
+    const dbSecCode =
+      targetSecCode.length === 4 ? `${targetSecCode}0` : targetSecCode;
+    historyConditions.push(eq(documents.secCode, dbSecCode));
   }
 
   const history =

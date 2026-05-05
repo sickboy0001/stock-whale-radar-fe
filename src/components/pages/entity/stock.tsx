@@ -7,9 +7,10 @@ import { toHalfWidth } from "@/lib/utils";
 import { StockYFinanceStats } from "@/components/organisms/entity/stock-yfinance-stats";
 import { StockHolder } from "@/components/organisms/entity/stock-holder";
 import { StockChartSection } from "@/components/organisms/entity/stock-chart-section";
-import { StockInfo } from "@/type/stock";
+import { StockInfo, HistoryItem } from "@/type/stock";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getStockholdersByStock } from "@/service/stockholders";
+import { ActivityModal } from "@/components/organisms/activity/activity-modal";
 
 interface StockholdersPageProps {
   edinetCode?: string | null;
@@ -23,6 +24,7 @@ export function StockholdersPage({
   const [stockInfo, setStockInfo] = React.useState<StockInfo | null>(
     initialStockInfo || null,
   );
+  const [history, setHistory] = React.useState<HistoryItem[]>([]);
   const [loading, setLoading] = React.useState(!initialStockInfo);
 
   // 閲覧履歴を記録
@@ -54,6 +56,7 @@ export function StockholdersPage({
         });
         if (data) {
           setStockInfo(data.stockInfo);
+          setHistory(data.history);
         }
       } catch (error) {
         console.error("Failed to fetch stock info:", error);
@@ -90,6 +93,7 @@ export function StockholdersPage({
             >
               <ExternalLink className="w-5 h-5" />
             </a>
+            <ActivityModal />
             <span className="text-muted-foreground text-sm">
               (EDINET コード：{stockInfo.edinetCode})
             </span>
@@ -108,7 +112,11 @@ export function StockholdersPage({
           <TabsTrigger value="chart">チャート</TabsTrigger>
         </TabsList>
         <TabsContent value="holder" className="space-y-8 mt-6">
-          <StockHolder stockInfo={stockInfo} edinetCode={edinetCode} />
+          <StockHolder
+            stockInfo={stockInfo}
+            edinetCode={edinetCode}
+            initialHistory={history}
+          />
         </TabsContent>
         <TabsContent value="chart" className="mt-6">
           <StockChartSection

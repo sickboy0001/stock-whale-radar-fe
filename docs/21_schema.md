@@ -250,3 +250,51 @@ CREATE INDEX idx_view_history_user_guest ON view_history(user_id, guest_id);
 CREATE INDEX idx_view_history_viewed_at ON view_history(viewed_at);
 CREATE INDEX idx_view_history_target ON view_history(target_type, target_code);
 ```
+
+### バケット本体
+```js
+import { sqliteTable, integer, text, index } from "drizzle-orm/sqlite-core";
+
+// 1. バケット本体
+export const userBuckets = sqliteTable("user_buckets", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  userId: text("user_id").notNull(),
+  name: text("name").notNull(),
+  description: text("description"),
+  // バケット自体の表示順
+  sortOrder: integer("sort_order").default(0).notNull(),
+  createdAt: text("created_at").default("datetime('now')"),
+}, (table) => ({
+  userIdIdx: index("idx_user_buckets_user_id").on(table.userId),
+}));
+
+```
+### バケット内アイテム（銘柄 or 投資家）
+
+```ts
+// 2. バケット内アイテム（銘柄 or 投資家）
+export const bucketItems = sqliteTable("bucket_items", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  bucketId: integer("bucket_id").references(() => userBuckets.id, { onDelete: "cascade" }),
+  
+  // 'stock' (銘柄) または 'investor' (投資家) を格納
+  itemType: text("item_type", { enum: ["stock", "investor"] }).notNull(),
+  
+  // sec_code または edinet_code を格納
+  itemCode: text("item_code").notNull(),
+  
+  // バケット内での表示順
+  sortOrder: integer("sort_order").default(0).notNull(),
+  createdAt: text("created_at").default("datetime('now')"),
+}, (table) => ({
+  bucketIdIdx: index("idx_bucket_items_bucket_id").on(table.bucketId),
+}));
+```
+```sql
+-- 銘柄情報を取得する場合のイメージ
+SELECT b.*, e.submitter_name as name
+FROM bucket_items b
+LEFT JOIN edinet_codes e ON b.item_code = e.sec_code
+WHERE b.bucket_id = ? AND b.item_type = 'stock'
+ORDER BY b.sort_order ASC;
+```
