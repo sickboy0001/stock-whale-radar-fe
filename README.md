@@ -146,12 +146,13 @@ graph TD
     API -- "④ 保存" --> Turso
 ```
 ## todo
-* チャートの実装
-* コメント入力できるようにする。データベースはZerosecへの登録を想定
-* 履歴の登録（個人、全体）（間近１週間、間近１か月、間近３か月）
-* １日１回EdinetCode,FoundCodeを入手できるように(CloudRun（BackEnd）とGithubActionで実装する)
-* GA4対応
-* Help対応
+- [x] チャートの実装
+- [ ] コメント入力できるようにする。データベースはZerosecへの登録を想定
+- [x] 履歴の登録（全体）（間近１週間、間近１か月、間近３か月）
+- [ ] 履歴の登録（個人）（間近１週間、間近１か月、間近３か月）
+- [ ] １日１回EdinetCode,FoundCodeを入手できるように(CloudRun（BackEnd）とGithubActionで実装する)
+- [ ] GA4対応
+- [ ] Help対応
 
 ## history
 * 2026/4/30
