@@ -17,17 +17,24 @@ export async function generateMetadata({
   params,
   searchParams,
 }: PageProps): Promise<Metadata> {
-  const { id } = await params;
-  const search = await searchParams;
-  const data = await getStockholdersByStock({
-    secCode: search.stock_code,
-    edinetCode: id,
-  });
+  try {
+    const { id } = await params;
+    const search = await searchParams;
+    const data = await getStockholdersByStock({
+      secCode: search.stock_code,
+      edinetCode: id,
+    });
 
-  const stockName = data?.stockInfo?.submitterName || id;
-  return {
-    title: `${stockName} | 大口株主構成 | Stock Whale Radar`,
-  };
+    const stockName = data?.stockInfo?.submitterName || id;
+    return {
+      title: `${stockName} | 大口株主構成 | Stock Whale Radar`,
+    };
+  } catch (error) {
+    console.error("Error generating metadata:", error);
+    return {
+      title: "大口株主構成 | Stock Whale Radar",
+    };
+  }
 }
 
 export default async function Page({ params, searchParams }: PageProps) {

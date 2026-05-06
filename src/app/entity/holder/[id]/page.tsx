@@ -13,13 +13,20 @@ interface PageProps {
 export async function generateMetadata({
   params,
 }: PageProps): Promise<Metadata> {
-  const { id } = await params;
-  const data = await getHolderStocks(id);
-  const holderName = data?.holderInfo?.submitterName || id;
+  try {
+    const { id } = await params;
+    const data = await getHolderStocks(id);
+    const holderName = data?.holderInfo?.submitterName || id;
 
-  return {
-    title: `${holderName} | 保有銘柄一覧 | Stock Whale Radar`,
-  };
+    return {
+      title: `${holderName} | 保有銘柄一覧 | Stock Whale Radar`,
+    };
+  } catch (error) {
+    console.error("Error generating metadata:", error);
+    return {
+      title: "保有銘柄一覧 | Stock Whale Radar",
+    };
+  }
 }
 
 export default async function Page({ params }: PageProps) {
