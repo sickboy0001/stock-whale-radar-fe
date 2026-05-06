@@ -93,7 +93,7 @@ export function StockholdersPage({
             >
               <ExternalLink className="w-5 h-5" />
             </a>
-            <ActivityModal />
+            <ActivityModal initialFilter="stock" />
             <span className="text-muted-foreground text-sm">
               (EDINET コード：{stockInfo.edinetCode})
             </span>

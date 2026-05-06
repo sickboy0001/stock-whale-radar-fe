@@ -6,6 +6,7 @@ import {
   HolderStock,
   type HistoryItem,
 } from "@/components/organisms/entity/holder-stock";
+import { ActivityModal } from "@/components/organisms/activity/activity-modal";
 
 type HolderInfo = {
   edinetCode: string;
@@ -34,6 +35,7 @@ export function HolderStocksPage({
             <span className="font-bold text-2xl">
               {toHalfWidth(holderInfo.submitterName)}
             </span>
+            <ActivityModal initialFilter="holder" />
             <span className="text-muted-foreground text-sm">
               (EDINETコード: {holderInfo.edinetCode})
             </span>

@@ -8,10 +8,17 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { ActivityPage } from "@/components/pages/activity/ActivityPage";
+import {
+  ActivityPage,
+  FilterType,
+} from "@/components/pages/activity/ActivityPage";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
-export const ActivityModal = () => {
+interface ActivityModalProps {
+  initialFilter?: FilterType;
+}
+
+export const ActivityModal = ({ initialFilter }: ActivityModalProps) => {
   return (
     <Dialog>
       <DialogTrigger
@@ -30,7 +37,7 @@ export const ActivityModal = () => {
         </DialogHeader>
         <ScrollArea className="flex-1 overflow-y-auto">
           <div className="pb-10">
-            <ActivityPage />
+            <ActivityPage initialFilter={initialFilter} />
           </div>
         </ScrollArea>
       </DialogContent>

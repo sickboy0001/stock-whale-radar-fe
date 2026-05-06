@@ -6,18 +6,20 @@ import { HistoryItem, TrendingItem } from "@/service/view-history";
 import { HistoryCard } from "@/components/organisms/activity/history-card";
 import { TrendingItemCard } from "@/components/organisms/activity/trending-item-card";
 
+export type FilterType = "all" | "holder" | "stock";
+
 interface ActivityPageProps {
   personalData?: HistoryItem[];
   initialTrendingData?: TrendingItem[];
+  initialFilter?: FilterType;
 }
-
-type FilterType = "all" | "holder" | "stock";
 
 export const ActivityPage = ({
   personalData = [],
   initialTrendingData = [],
+  initialFilter = "all",
 }: ActivityPageProps) => {
-  const [filter, setFilter] = useState<FilterType>("all");
+  const [filter, setFilter] = useState<FilterType>(initialFilter);
   const [period, setPeriod] = useState<"24h" | "7d" | "30d">("7d");
   const [trendingData, setTrendingData] =
     useState<TrendingItem[]>(initialTrendingData);
