@@ -5,6 +5,7 @@ import { MainSidebar } from "@/components/layout/main-sidebar";
 import TopHeader from "@/components/layout/top-header";
 import MainFooter from "@/components/layout/main-footer";
 import AuthProvider from "@/components/providers/auth-provider";
+import { GoogleAnalytics } from "@next/third-parties/google";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -17,7 +18,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Stock Whale Radar",
+  title: "ダッシュボード | Stock Whale Radar",
   description: "大口投資家（クジラ）の動きを可視化・追跡するためのサービス",
 };
 
@@ -40,6 +41,7 @@ export default function RootLayout({
             <MainFooter />
           </div>
         </AuthProvider>
+        <GoogleAnalytics gaId="G-32KD3X1CT0" />
       </body>
     </html>
   );

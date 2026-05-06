@@ -1,4 +1,9 @@
 import { EntitySearch } from "@/components/pages/entity/entity-search";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "検索 | Stock Whale Radar",
+};
 
 export default function SearchPage() {
   return (

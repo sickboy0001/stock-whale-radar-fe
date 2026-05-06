@@ -1,6 +1,11 @@
 import { RecentWhaleMovements } from "@/components/pages/recent-whale-movements";
 import { RecentWhaleMovementsList } from "@/components/organisms/entity/recent-whale-movements-list";
 import { Suspense } from "react";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "クジラの動き | Stock Whale Radar",
+};
 
 export const dynamic = "force-dynamic";
 

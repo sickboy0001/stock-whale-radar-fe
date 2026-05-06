@@ -2,11 +2,24 @@ import { getHolderStocks } from "@/service/holderstocks";
 import { HolderStocksPage } from "@/components/pages/entity/holder";
 import { auth } from "@/auth";
 import { recordViewHistory } from "@/actions/record-history";
+import type { Metadata } from "next";
 
 interface PageProps {
   params: Promise<{
     id: string;
   }>;
+}
+
+export async function generateMetadata({
+  params,
+}: PageProps): Promise<Metadata> {
+  const { id } = await params;
+  const data = await getHolderStocks(id);
+  const holderName = data?.holderInfo?.submitterName || id;
+
+  return {
+    title: `${holderName} | 保有銘柄一覧 | Stock Whale Radar`,
+  };
 }
 
 export default async function Page({ params }: PageProps) {
