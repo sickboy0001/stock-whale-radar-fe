@@ -151,7 +151,8 @@ graph TD
 - [x] 履歴の登録（全体）（間近１週間、間近１か月、間近３か月）
 - [ ] 履歴の登録（個人）（間近１週間、間近１か月、間近３か月）
 - [ ] １日１回EdinetCode,FoundCodeを入手できるように(CloudRun（BackEnd）とGithubActionで実装する)
-- [ ] GA4対応
+- [x] GA4対応
+- [ ] Looker対応
 - [ ] Help対応
 
 ## history

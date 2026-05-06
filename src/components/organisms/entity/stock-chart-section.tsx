@@ -70,7 +70,7 @@ export function StockChartSection({
   }
 
   return (
-    <div className="p-4 bg-zinc-950 rounded-xl border border-zinc-800 shadow-inner">
+    <div className="p-4 bg-white rounded-xl border border-zinc-200 shadow-sm">
       <StockChart data={data} />
     </div>
   );

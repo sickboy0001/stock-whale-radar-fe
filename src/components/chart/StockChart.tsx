@@ -25,16 +25,16 @@ export const StockChart = ({ data }: { data: ChartDataPoint[] }) => {
 
         const chart = createChart(chartContainerRef.current, {
           layout: {
-            background: { type: ColorType.Solid, color: "transparent" },
-            textColor: "#a1a1aa",
+            background: { type: ColorType.Solid, color: "#ffffff" },
+            textColor: "#4b5563",
           },
           width: chartContainerRef.current.clientWidth || 600,
           height: 500,
           grid: {
-            vertLines: { color: "#27272a" },
-            horzLines: { color: "#27272a" },
+            vertLines: { color: "#f3f4f6" },
+            horzLines: { color: "#f3f4f6" },
           },
-          timeScale: { borderColor: "#3f3f46" },
+          timeScale: { borderColor: "#e5e7eb" },
         }) as any;
 
         // Defensive helper for adding series
@@ -52,13 +52,15 @@ export const StockChart = ({ data }: { data: ChartDataPoint[] }) => {
           );
         };
 
-        // 1. ローソク足
+        // 1. ローソク足 (日本風: 陽線=赤, 陰線=青)
         const candlestickSeries = addSeries("Candlestick", {
-          upColor: "#22c55e",
-          downColor: "#ef4444",
-          borderVisible: false,
-          wickUpColor: "#22c55e",
-          wickDownColor: "#ef4444",
+          upColor: "#ef4444",
+          downColor: "#2563eb",
+          borderVisible: true,
+          wickUpColor: "#ef4444",
+          wickDownColor: "#2563eb",
+          borderUpColor: "#ef4444",
+          borderDownColor: "#2563eb",
         });
         candlestickSeries.setData(data);
 
@@ -77,22 +79,29 @@ export const StockChart = ({ data }: { data: ChartDataPoint[] }) => {
         };
 
         const sma5Series = addSeries("Line", {
-          color: "#3b82f6",
-          lineWidth: 2,
+          color: "#d946ef", // マゼンタ/ピンク系
+          lineWidth: 1.5,
           title: "SMA 5",
         });
         sma5Series.setData(calculateSMA(5));
 
         const sma25Series = addSeries("Line", {
-          color: "#eab308",
-          lineWidth: 2,
+          color: "#10b981", // 緑系
+          lineWidth: 1.5,
           title: "SMA 25",
         });
         sma25Series.setData(calculateSMA(25));
 
+        const sma75Series = addSeries("Line", {
+          color: "#f59e0b", // オレンジ/黄色系
+          lineWidth: 1.5,
+          title: "SMA 75",
+        });
+        sma75Series.setData(calculateSMA(75));
+
         // 3. 出来高 (Histogram)
         const volumeSeries = addSeries("Histogram", {
-          color: "#26a69a",
+          color: "#94a3b8",
           priceFormat: {
             type: "volume",
           },
@@ -111,8 +120,8 @@ export const StockChart = ({ data }: { data: ChartDataPoint[] }) => {
           value: d.volume,
           color:
             d.close >= d.open
-              ? "rgba(34, 197, 94, 0.5)"
-              : "rgba(239, 68, 68, 0.5)",
+              ? "rgba(239, 68, 68, 0.5)"
+              : "rgba(37, 99, 235, 0.5)",
         }));
         volumeSeries.setData(volumeData);
 
