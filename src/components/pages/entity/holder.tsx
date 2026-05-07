@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { Search } from "lucide-react";
 import { toHalfWidth } from "@/lib/utils";
 import {
   HolderStock,
@@ -35,6 +36,15 @@ export function HolderStocksPage({
             <span className="font-bold text-2xl">
               {toHalfWidth(holderInfo.submitterName)}
             </span>
+            <a
+              href={`https://www.google.com/search?q=${encodeURIComponent(holderInfo.submitterName)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-zinc-400 hover:text-blue-500 transition-colors"
+              title="Googleで検索"
+            >
+              <Search className="w-5 h-5" />
+            </a>
             <ActivityModal initialFilter="holder" />
             <span className="text-muted-foreground text-sm">
               (EDINETコード: {holderInfo.edinetCode})

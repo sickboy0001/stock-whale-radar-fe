@@ -35,6 +35,22 @@ export const StockChart = ({ data }: { data: ChartDataPoint[] }) => {
             horzLines: { color: "#f3f4f6" },
           },
           timeScale: { borderColor: "#e5e7eb" },
+          localization: {
+            timeFormatter: (time: any) => {
+              if (typeof time === "string") {
+                const date = new Date(time);
+                const yy = String(date.getFullYear()).slice(-2);
+                const m = date.getMonth() + 1;
+                const d = date.getDate();
+                return `${yy}-${m}-${d}`;
+              }
+              if (time && typeof time === "object" && "year" in time) {
+                const yy = String(time.year).slice(-2);
+                return `${yy}-${time.month}-${time.day}`;
+              }
+              return String(time);
+            },
+          },
         }) as any;
 
         // Defensive helper for adding series
