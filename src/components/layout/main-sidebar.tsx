@@ -6,14 +6,18 @@ import { cn } from "@/lib/utils";
 import {
   LayoutDashboard,
   Search,
-  Users,
   Database,
   Menu,
   LogOut,
   TrendingUp,
   Activity,
+  createLucideIcon,
+  HelpCircle,
 } from "lucide-react";
+import { whale } from "@lucide/lab";
 import { ScrollArea } from "@/components/ui/scroll-area";
+
+const Whale = createLucideIcon("Whale", whale);
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useSession } from "next-auth/react";
 import { signOut } from "next-auth/react";
@@ -56,7 +60,7 @@ const SidebarContent = ({ pathname, session }: SidebarContentProps) => (
     <div className="p-6">
       <Link href="/" className="flex items-center gap-2 font-bold text-xl">
         <div className="bg-blue-600 p-1.5 rounded">
-          <Users className="w-6 h-6 text-white" />
+          <Whale className="w-6 h-6 text-white" />
         </div>
         <span>Whale Radar</span>
       </Link>
@@ -115,9 +119,18 @@ const SidebarContent = ({ pathname, session }: SidebarContentProps) => (
       </div>
     </ScrollArea>
 
-    {/* Logout button - shown only when logged in */}
-    {session && (
-      <div className="p-4 border-t border-slate-800">
+    {/* Help and Logout area */}
+    <div className="p-4 border-t border-slate-800">
+      <a
+        href="/help/00_index"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:bg-slate-800 hover:text-white text-slate-400 mb-1"
+      >
+        <HelpCircle className="w-4 h-4" />
+        ヘルプ
+      </a>
+      {session && (
         <button
           onClick={() => signOut({ callbackUrl: "/" })}
           className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:bg-slate-800 hover:text-white text-slate-400"
@@ -125,8 +138,8 @@ const SidebarContent = ({ pathname, session }: SidebarContentProps) => (
           <LogOut className="w-4 h-4" />
           ログアウト
         </button>
-      </div>
-    )}
+      )}
+    </div>
 
     {/* Version footer */}
     <div className="p-4 border-t border-slate-800">

@@ -9,6 +9,14 @@ export default function MainFooter() {
             &copy; {currentYear} Stock Whale Radar. All rights reserved.
           </p>
           <div className="flex items-center gap-4 text-xs text-slate-400">
+            <a
+              href="/help/00_index"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-blue-600 transition-colors"
+            >
+              ヘルプセンター
+            </a>
             <span>v1.0.0</span>
           </div>
         </div>

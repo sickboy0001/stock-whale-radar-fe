@@ -146,14 +146,20 @@ graph TD
     API -- "④ 保存" --> Turso
 ```
 ## todo
-- [x] チャートの実装
 - [ ] コメント入力できるようにする。データベースはZerosecへの登録を想定
-- [x] 履歴の登録（全体）（間近１週間、間近１か月、間近３か月）
 - [ ] 履歴の登録（個人）（間近１週間、間近１か月、間近３か月）
 - [ ] １日１回EdinetCode,FoundCodeを入手できるように(CloudRun（BackEnd）とGithubActionで実装する)
-- [x] GA4対応
 - [ ] Looker対応
-- [ ] Help対応
+- [x] Help対応FW調整
+- [ ] Help対応コンテンツ見直し
+- [x] 投資家情報を生成AIから入手→Gemini　仕様書 [ivestor_profile](docs/memo/20260508_ivestor_profile.md)
+- [ ] 投資家情報を生成AIから入手→Gemini　実装
+- [ ] 投資家情報の手修正
+- [ ] プロファイル登録
+- [ ] /activity　が異常な登録になってしまう。4259でなくE37158などで登録しないと無理なのかな。fi
+- [x] GA4対応
+- [x] 履歴の登録（全体）（間近１週間、間近１か月、間近３か月）
+- [x] チャートの実装
 
 ## history
 * 2026/4/30
