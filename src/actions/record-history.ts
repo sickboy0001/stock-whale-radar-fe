@@ -1,7 +1,7 @@
 "use server";
 
 import { db } from "@/db";
-import { viewHistory } from "@/db/schema";
+import { viewHistory, edinetCodes } from "@/db/schema";
 import { auth } from "@/auth";
 import { cookies } from "next/headers";
 import { nanoid } from "nanoid";
@@ -17,12 +17,14 @@ export interface RecordHistoryParams {
 }
 
 // データベースの CHECK 制約に適合する target_type のマッピング
-const TARGET_TYPE_MAP: Record<"entity" | "fund" | "stock", "entity" | "fund"> =
-  {
-    entity: "entity",
-    fund: "fund",
-    stock: "entity", // stock は entity として記録
-  };
+const TARGET_TYPE_MAP: Record<
+  "entity" | "fund" | "stock",
+  "entity" | "fund" | "stock"
+> = {
+  entity: "entity",
+  fund: "fund",
+  stock: "stock",
+};
 
 /**
  * 閲覧履歴を記録する Server Action
@@ -55,6 +57,26 @@ export async function recordViewHistory({
       }
     }
 
+    let finalTargetCode = targetCode;
+    let finalTargetType = targetType;
+
+    // entity (EDINETコード) の場合、または stock で targetCode が EDINETコードの場合、証券コードへの変換を試みる
+    if (targetType === "entity" || targetType === "stock") {
+      const edinetInfo = await db
+        .select({ secCode: edinetCodes.secCode })
+        .from(edinetCodes)
+        .where(eq(edinetCodes.edinetCode, targetCode))
+        .limit(1);
+
+      if (edinetInfo[0]?.secCode) {
+        // 証券コードがある場合は stock に変換
+        const rawCode = edinetInfo[0].secCode;
+        finalTargetCode =
+          rawCode.length >= 4 ? rawCode.substring(0, 4) : rawCode;
+        finalTargetType = "stock";
+      }
+    }
+
     // 直近 1 分以内に同じ記録がある場合はスキップ (重複防止)
     const oneMinuteAgoStr = new Date(Date.now() - 60 * 1000)
       .toISOString()
@@ -68,8 +90,8 @@ export async function recordViewHistory({
           userId
             ? eq(viewHistory.userId, userId)
             : eq(viewHistory.guestId, guestId || ""),
-          eq(viewHistory.targetCode, targetCode),
-          eq(viewHistory.targetType, targetType),
+          eq(viewHistory.targetCode, finalTargetCode),
+          eq(viewHistory.targetType, finalTargetType),
           gte(viewHistory.viewedAt, oneMinuteAgoStr),
         ),
       )
@@ -84,13 +106,13 @@ export async function recordViewHistory({
     const viewedAtStr = now.toISOString().replace("T", " ").slice(0, 23);
 
     // target_type をデータベース制約に適合するようにマッピング
-    const dbTargetType = TARGET_TYPE_MAP[targetType];
+    const dbTargetType = TARGET_TYPE_MAP[finalTargetType];
 
     await db.insert(viewHistory).values({
       userId: userId ?? null,
       guestId: guestId ?? null,
       targetType: dbTargetType,
-      targetCode,
+      targetCode: finalTargetCode,
       viewedAt: viewedAtStr,
     });
 

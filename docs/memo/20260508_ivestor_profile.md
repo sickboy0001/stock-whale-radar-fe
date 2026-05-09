@@ -12,6 +12,8 @@ Next.js から直接 Turso へアクセスし、情報をキャッシュしま�
 | カラム名 | 型 | 説明 |
 | :--- | :--- | :--- |
 | `edinet_code` | TEXT (PK) | 投資家を識別する一意のコード |
+| `official_name` | TEXT  | EDINET上の正式名称（整合性用） |
+| `display_name` | TEXT  | AIが生成した読みやすい通称（例: オアシス） |
 | `summary` | TEXT | 投資家の概要（日本語） |
 | `aum` | TEXT | 運用資産残高 (Assets Under Management) |
 | `established` | TEXT | 設立日 |
@@ -65,13 +67,23 @@ export async function getOrGenerateProfile(edinetCode: string, name: string, for
     generationConfig: { responseMimeType: "application/json" } // JSON出力を強制
   });
 
-  const prompt = `${name}（EDINETコード: ${edinetCode}）という投資家・運用会社について、以下の情報を日本語で調査しJSON形式で回答してください。
-    項目: 概要(summary), 運用資産額(aum), 設立年(established), 主要人物(key_people), 本社所在地(location), 公式サイト(website)
-    
+  const prompt = `
+    正式名称: "${officialName}"
+    EDINETコード: "${edinetCode}"
+    上記の上場銘柄の大口保有者について、日本市場での投資活動を中心に調査し、以下のJSON形式で回答してください。
     【重要ルール】
     - key_peopleは [{ "name": "...", "role": "..." }] の形式にしてください。
     - 不明な項目は空文字ではなく "不明" と記載してください。
-    - 投資方針や近年の活動を含めた要約をsummaryに記載してください。`;
+    - 投資方針や近年の活動を含めた要約をsummaryに記載してください。
+    項目:
+    - display_name: 日本語での一般的かつ簡潔な通称（例: "三菱UFJ銀行"、"オアシス・マネジメント"）
+    - summary: 投資スタイル（アクティビスト、バリュー投資等）や近年の日本での動向を含む200文字程度の解説
+    - aum: 運用資産残高（可能な限り最新の円またはドル表記）
+    - established: 設立年
+    - key_people: 主要な人物のリスト（name, role）
+    - location: 本社または主要拠点の所在地
+    - website: 公式サイトのURL
+  `;　
 
   try {
     const result = await model.generateContent(prompt);

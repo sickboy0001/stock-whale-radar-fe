@@ -20,9 +20,11 @@ export async function generateMetadata({
   try {
     const { id } = await params;
     const search = await searchParams;
+    const isEdinetCode = id.startsWith("E");
+
     const data = await getStockholdersByStock({
-      secCode: search.stock_code,
-      edinetCode: id,
+      secCode: isEdinetCode ? search.stock_code : id,
+      edinetCode: isEdinetCode ? id : undefined,
     });
 
     const stockName = data?.stockInfo?.submitterName || id;
@@ -41,23 +43,24 @@ export default async function Page({ params, searchParams }: PageProps) {
   const { id } = await params;
   const search = await searchParams;
   const session = await auth();
+  const isEdinetCode = id.startsWith("E");
 
   // 閲覧履歴を記録
   recordViewHistory({
     targetCode: id,
-    targetType: "stock",
+    targetType: isEdinetCode ? "entity" : "stock",
     userId: session?.user?.id,
   }).catch(console.error);
 
   const data = await getStockholdersByStock({
-    secCode: search.stock_code,
-    edinetCode: id,
+    secCode: isEdinetCode ? search.stock_code : id,
+    edinetCode: isEdinetCode ? id : undefined,
   });
 
   return (
     <StockholdersPage
       initialStockInfo={data?.stockInfo || null}
-      edinetCode={id}
+      edinetCode={data?.stockInfo?.edinetCode || (isEdinetCode ? id : null)}
     />
   );
 }

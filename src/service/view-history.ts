@@ -1,6 +1,6 @@
 import { db } from "@/db";
 import { viewHistory } from "@/db/schema";
-import { desc, sql, and, eq, or } from "drizzle-orm";
+import { desc, sql, and, eq, or, like } from "drizzle-orm";
 import { edinetCodes } from "@/db/schema";
 import { fundCodes } from "@/db/schema";
 
@@ -70,7 +70,21 @@ export async function getPersonalHistory({
       | "fund"
       | "stock";
 
-    if (item.targetType === "entity" || item.targetType === "stock") {
+    if (item.targetType === "stock") {
+      const entity = await db
+        .select({
+          submitterName: edinetCodes.submitterName,
+          secCode: edinetCodes.secCode,
+        })
+        .from(edinetCodes)
+        .where(like(edinetCodes.secCode, `${item.targetCode}%`))
+        .limit(1);
+
+      if (entity[0]) {
+        name = entity[0].submitterName;
+        inferredType = "stock";
+      }
+    } else if (item.targetType === "entity") {
       const entity = await db
         .select({
           submitterName: edinetCodes.submitterName,
@@ -149,7 +163,21 @@ export async function getTrendingWhales(
       | "fund"
       | "stock";
 
-    if (item.targetType === "entity" || item.targetType === "stock") {
+    if (item.targetType === "stock") {
+      const entity = await db
+        .select({
+          submitterName: edinetCodes.submitterName,
+          secCode: edinetCodes.secCode,
+        })
+        .from(edinetCodes)
+        .where(like(edinetCodes.secCode, `${item.targetCode}%`))
+        .limit(1);
+
+      if (entity[0]) {
+        name = entity[0].submitterName;
+        inferredType = "stock";
+      }
+    } else if (item.targetType === "entity") {
       const entity = await db
         .select({
           submitterName: edinetCodes.submitterName,
