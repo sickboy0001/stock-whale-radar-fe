@@ -14,6 +14,7 @@
   },
   "dependencies": {
     "@base-ui/react": "^1.4.1",
+    "@google/generative-ai": "^0.24.1",
     "@libsql/client": "^0.17.3",
     "@lucide/lab": "^0.1.2",
     "@next/third-parties": "^16.2.5",
@@ -22,6 +23,7 @@
     "autoprefixer": "^10.5.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "dotenv": "^17.4.2",
     "drizzle-orm": "^0.45.2",
     "lightweight-charts": "^5.2.0",
     "lucide-react": "^1.11.0",

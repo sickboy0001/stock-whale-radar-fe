@@ -2,6 +2,7 @@ import { getStockholdersByStock } from "@/service/stockholders";
 import { StockholdersPage } from "@/components/pages/entity/stock";
 import { auth } from "@/auth";
 import { recordViewHistory } from "@/actions/record-history";
+import { getOrGenerateStockProfile } from "@/service/stock-intel";
 import type { Metadata } from "next";
 
 interface PageProps {
@@ -57,10 +58,29 @@ export default async function Page({ params, searchParams }: PageProps) {
     edinetCode: isEdinetCode ? id : undefined,
   });
 
+  const displayCode =
+    data?.stockInfo?.secCode?.length === 5 &&
+    data.stockInfo.secCode.endsWith("0")
+      ? data.stockInfo.secCode.substring(0, 4)
+      : data?.stockInfo?.secCode;
+
+  /*
+  const stockProfile =
+    displayCode && data?.stockInfo
+      ? await getOrGenerateStockProfile(
+          displayCode,
+          data.stockInfo.submitterName,
+        )
+      : null;
+  */
+  const stockProfile = null; // Client-side fetch on demand
+
   return (
     <StockholdersPage
       initialStockInfo={data?.stockInfo || null}
       edinetCode={data?.stockInfo?.edinetCode || (isEdinetCode ? id : null)}
+      initialProfile={stockProfile}
+      displayCode={displayCode}
     />
   );
 }

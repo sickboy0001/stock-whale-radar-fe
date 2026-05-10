@@ -135,3 +135,29 @@ export const viewHistory = sqliteTable(
     ),
   }),
 );
+
+export const investorProfiles = sqliteTable("investor_profiles", {
+  edinetCode: text("edinet_code").primaryKey(),
+  officialName: text("official_name"),
+  displayName: text("display_name"),
+  summary: text("summary"),
+  aum: text("aum"),
+  established: text("established"),
+  keyPeople: text("key_people"), // JSON string
+  location: text("location"),
+  website: text("website"),
+  lastUpdated: text("last_updated"),
+});
+
+export const stockProfiles = sqliteTable("stock_profiles", {
+  secCode: text("sec_code").primaryKey(),
+  officialName: text("official_name"),
+  displayName: text("display_name"),
+  summary: text("summary"),
+  businessModel: text("business_model"),
+  established: text("established"),
+  keyPeople: text("key_people"), // JSON string
+  location: text("location"),
+  website: text("website"),
+  lastUpdated: text("last_updated"),
+});

@@ -1,13 +1,16 @@
 "use client";
 
-import React from "react";
-import { Search } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { Search, ChevronDown, ChevronUp, Info } from "lucide-react";
 import { toHalfWidth } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 import {
   HolderStock,
   type HistoryItem,
 } from "@/components/organisms/entity/holder-stock";
 import { ActivityModal } from "@/components/organisms/activity/activity-modal";
+import { InvestorKnowledgeCard } from "@/components/organisms/investor/InvestorKnowledgeCard";
+import { fetchInvestorProfile } from "@/actions/investor-profile";
 
 type HolderInfo = {
   edinetCode: string;
@@ -19,12 +22,39 @@ type HolderInfo = {
 interface HolderStocksPageProps {
   holderInfo: HolderInfo | null;
   history: HistoryItem[];
+  profile: any;
 }
 
 export function HolderStocksPage({
   holderInfo,
   history,
+  profile: initialProfile,
 }: HolderStocksPageProps) {
+  const [showProfile, setShowProfile] = useState(false);
+  const [profile, setProfile] = useState(initialProfile);
+  const [profileLoading, setProfileLoading] = useState(false);
+
+  // 詳細表示が ON になった時に初めてプロフィールを取得
+  useEffect(() => {
+    const fetchProfile = async () => {
+      if (showProfile && !profile && holderInfo?.edinetCode) {
+        setProfileLoading(true);
+        try {
+          const data = await fetchInvestorProfile(
+            holderInfo.edinetCode,
+            holderInfo.submitterName,
+          );
+          setProfile(data);
+        } catch (error) {
+          console.error("Failed to fetch profile:", error);
+        } finally {
+          setProfileLoading(false);
+        }
+      }
+    };
+    fetchProfile();
+  }, [showProfile, profile, holderInfo]);
+
   return (
     <div className="container mx-auto py-6 space-y-8">
       <div className="flex flex-col gap-4">
@@ -46,6 +76,24 @@ export function HolderStocksPage({
               <Search className="w-5 h-5" />
             </a>
             <ActivityModal initialFilter="holder" />
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setShowProfile(!showProfile)}
+              className="flex items-center gap-2"
+            >
+              {showProfile ? (
+                <>
+                  <ChevronUp className="w-4 h-4" />
+                  詳細を隠す
+                </>
+              ) : (
+                <>
+                  <Info className="w-4 h-4" />
+                  詳細を表示
+                </>
+              )}
+            </Button>
             <span className="text-muted-foreground text-sm">
               (EDINETコード: {holderInfo.edinetCode})
             </span>
@@ -57,7 +105,19 @@ export function HolderStocksPage({
         )}
       </div>
 
-      <HolderStock history={history} />
+      {showProfile && (
+        <div className={profileLoading ? "animate-pulse" : ""}>
+          <InvestorKnowledgeCard
+            profile={profile}
+            name={holderInfo?.submitterName || ""}
+            edinetCode={holderInfo?.edinetCode || ""}
+          />
+        </div>
+      )}
+
+      <div className="space-y-8">
+        <HolderStock history={history} />
+      </div>
     </div>
   );
 }

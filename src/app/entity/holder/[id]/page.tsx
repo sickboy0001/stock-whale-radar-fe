@@ -1,4 +1,5 @@
 import { getHolderStocks } from "@/service/holderstocks";
+import { getOrGenerateProfile } from "@/service/investor-intel";
 import { HolderStocksPage } from "@/components/pages/entity/holder";
 import { auth } from "@/auth";
 import { recordViewHistory } from "@/actions/record-history";
@@ -51,11 +52,19 @@ export default async function Page({ params }: PageProps) {
   }).catch(console.error);
 
   const data = await getHolderStocks(edinetCode);
+  /*
+  const profile = await getOrGenerateProfile(
+    edinetCode,
+    data?.holderInfo?.submitterName || "",
+  );
+  */
+  const profile = null; // Client-side fetch on demand
 
   return (
     <HolderStocksPage
       holderInfo={data?.holderInfo || null}
       history={data?.history || []}
+      profile={profile}
     />
   );
 }
